@@ -7,10 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -25,6 +22,18 @@ public class DriversController {
     public DriverResponse addDriver(@RequestBody @Valid DriversRequest driversRequest) {
         try {
             return driversService.addDriver(driversRequest);
+        } catch (RuntimeException e) {
+            DriverResponse driverResponse = new DriverResponse();
+            driverResponse.setMessage(e.getMessage());
+            return driverResponse;
+        }
+    }
+
+    @DeleteMapping("/{personal_number}")
+    @Operation(summary = "Удалить водителя")
+    public DriverResponse deleteDriver(@PathVariable("personal_number") String personalNumber) {
+        try {
+            return driversService.deleteDriver(personalNumber);
         } catch (RuntimeException e) {
             DriverResponse driverResponse = new DriverResponse();
             driverResponse.setMessage(e.getMessage());

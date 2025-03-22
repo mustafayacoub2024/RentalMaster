@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Driver;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -35,4 +37,18 @@ public class DriversServiceImpl implements DriversService {
         response.setMessage("Водитель с табельным номером " + savedDriver.getPersonalNumber() + " успешно создан");
         return response;
     }
+
+    @Override
+    public DriverResponse deleteDriver(String personalNumber) {
+        Drivers driver = driversRepository.findByPersonalNumber(personalNumber)
+                .orElseThrow(() -> new RuntimeException("Водитель с табельным номером "
+                        + personalNumber + " не найден"));
+
+        driversRepository.delete(driver);
+
+        DriverResponse response = new DriverResponse();
+        response.setMessage("Водитель с табельным номером " + driver.getPersonalNumber() + " успешно удалён");
+        return response;
+    }
 }
+
