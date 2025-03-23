@@ -30,10 +30,6 @@ public class Branches {
     private Location location;
 
     @OneToMany(mappedBy = "branch")
-    @JsonManagedReference(value = "branch_technique")
-    private List<Technique> techniques;
-
-    @OneToMany(mappedBy = "branch")
     @JsonManagedReference(value = "branch_order")
     private List<RentalOrder> rentalOrders;
 

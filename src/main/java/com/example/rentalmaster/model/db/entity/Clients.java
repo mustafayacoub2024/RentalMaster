@@ -1,5 +1,6 @@
 package com.example.rentalmaster.model.db.entity;
 /*Информация об юр лицах, которые арендуют технику */
+/* html страница: http://localhost:8080/clients.html */
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -22,11 +23,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity(name = "clients")
 public class Clients {
-
-//    @Id
-//    @UuidGenerator(style = UuidGenerator.Style.TIME)
-//    @Column(name = "clients_id", updatable = false, nullable = false)
-//    private UUID clientsId;
 
     @Column(name = "nameOfOrganization") //название организаций
     private String nameOfOrganization;

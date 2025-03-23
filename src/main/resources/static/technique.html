@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление техникой</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .header {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        .form-container {
+            margin: 20px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1>Управление техникой</h1>
+</div>
+
+<div class="form-container">
+    <h2>Действие</h2>
+    <select id="action" onchange="toggleForms()">
+        <option value="create">Создать технику</option>
+        <option value="update">Обновить технику</option>
+        <option value="delete">Удалить технику</option>
+    </select>
+</div>
+
+<div class="form-container" id="createForm">
+    <h2>Создать технику</h2>
+    <input type="text" id="createStateNumber" placeholder="Государственный номер">
+    <input type="text" id="createYear" placeholder="Год выпуска">
+    <input type="text" id="createLoadCapacity" placeholder="Грузоподъемность">
+    <input type="text" id="createWeight" placeholder="Масса">
+    <input type="text" id="createColor" placeholder="Цвет">
+    <input type="number" id="createBaseCost" placeholder="Базовая стоимость">
+    <select id="createType">
+        <option value="Экскаватор">Экскаватор</option>
+        <option value="Бульдозер">Бульдозер</option>
+        <option value="Автогрейдер">Автогрейдер</option>
+        <option value="Кран">Кран</option>
+        <option value="Асфальтоукладчик">Асфальтоукладчик</option>
+        <option value="Виброкаток">Виброкаток</option>
+        <option value="Бетононасос">Бетононасос</option>
+        <option value="Гидромолот">Гидромолот</option>
+    </select>
+    <button onclick="createTechnique()">Создать</button>
+</div>
+
+<div class="form-container" id="updateForm" style="display: none;">
+    <h2>Обновить технику</h2>
+    <input type="text" id="updateStateNumber" placeholder="Государственный номер">
+    <input type="text" id="updateYear" placeholder="Год выпуска">
+    <input type="text" id="updateLoadCapacity" placeholder="Грузоподъемность">
+    <input type="text" id="updateWeight" placeholder="Масса">
+    <input type="text" id="updateColor" placeholder="Цвет">
+    <input type="number" id="updateBaseCost" placeholder="Базовая стоимость">
+    <select id="updateType">
+        <option value="Экскаватор">Экскаватор</option>
+        <option value="Бульдозер">Бульдозер</option>
+        <option value="Автогрейдер">Автогрейдер</option>
+        <option value="Кран">Кран</option>
+        <option value="Асфальтоукладчик">Асфальтоукладчик</option>
+        <option value="Виброкаток">Виброкаток</option>
+        <option value="Бетононасос">Бетононасос</option>
+        <option value="Гидромолот">Гидромолот</option>
+    </select>
+    <button onclick="updateTechnique()">Обновить</button>
+</div>
+
+<div class="form-container" id="deleteForm" style="display: none;">
+    <h2>Удалить технику</h2>
+    <input type="text" id="deleteStateNumber" placeholder="Государственный номер">
+    <button onclick="deleteTechnique()">Удалить</button>
+</div>
+
+<script>
+    // Функция для переключения видимости форм
+    function toggleForms() {
+        const action = document.getElementById('action').value;
+        document.getElementById('createForm').style.display = action === 'create' ? 'block' : 'none';
+        document.getElementById('updateForm').style.display = action === 'update' ? 'block' : 'none';
+        document.getElementById('deleteForm').style.display = action === 'delete' ? 'block' : 'none';
+    }
+
+    // Функция для создания техники
+    async function createTechnique() {
+        const technique = {
+            stateNumber: document.getElementById('createStateNumber').value,
+            yearOfProduction: document.getElementById('createYear').value,
+            loadCapacity: document.getElementById('createLoadCapacity').value,
+            weight: document.getElementById('createWeight').value,
+            color: document.getElementById('createColor').value,
+            baseCost: parseFloat(document.getElementById('createBaseCost').value),
+            typeTechnique: document.getElementById('createType').value
+        };
+        const response = await fetch('/technique', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(technique)
+        });
+        const result = await response.json();
+        alert(result.message);
+    }
+
+    // Функция для обновления техники
+    async function updateTechnique() {
+        const technique = {
+            stateNumber: document.getElementById('updateStateNumber').value,
+            yearOfProduction: document.getElementById('updateYear').value,
+            loadCapacity: document.getElementById('updateLoadCapacity').value,
+            weight: document.getElementById('updateWeight').value,
+            color: document.getElementById('updateColor').value,
+            baseCost: parseFloat(document.getElementById('updateBaseCost').value),
+            typeTechnique: document.getElementById('updateType').value
+        };
+        const response = await fetch(`/technique/${technique.stateNumber}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(technique)
+        });
+        const result = await response.json();
+        alert(result.message);
+    }
+
+    // Функция для удаления техники
+    async function deleteTechnique() {
+        const stateNumber = document.getElementById('deleteStateNumber').value;
+        const response = await fetch(`/technique/${stateNumber}`, {
+            method: 'DELETE'
+        });
+        const result = await response.json();
+        alert(result.message);
+    }
+</script>
+</body>
+</html>
