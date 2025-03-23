@@ -18,6 +18,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @Slf4j
@@ -36,24 +37,42 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(CommonBackendException.class)
-    public void handleCommonBackendException(HttpServletResponse response, CommonBackendException ex) throws IOException {
-        response.sendError(ex.getStatus().value(), ex.getMessage());
+    public ResponseEntity<ErrorMessage> handleCommonBackendException(CommonBackendException ex) {
+        return ResponseEntity.status(ex.getStatus())
+                .body(ErrorMessage.builder()
+                        .timestamp(LocalDateTime.now())
+                        .message(ex.getMessage())
+                        .build());
     }
 
-    @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<ErrorMessage> handleMissingParams(MissingServletRequestParameterException ex) {
-        String parameter = ex.getParameterName();
-        log.error("{} parameter is missing", parameter);
 
-        return ResponseEntity.badRequest().body(new ErrorMessage(String.format("parameter is missing: %s", parameter)));
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ErrorMessage> handleMissingParams(MissingServletRequestParameterException ex, WebRequest request) {
+        String parameter = ex.getParameterName();
+        log.error("Отсутствует обязательный параметр: {}", parameter);
+
+        return ResponseEntity.badRequest()
+                .body(ErrorMessage.builder()
+                        .timestamp(LocalDateTime.now())
+                        .message(String.format("Отсутствует обязательный параметр: %s", parameter))
+                        .path(request.getDescription(false).replace("uri=", ""))
+                        .build());
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ErrorMessage> handleMismatchType(MethodArgumentTypeMismatchException ex) {
-        String parameter = ex.getParameter().getParameterName();
-        log.error("wrong data type for parameter: {}", parameter);
+    public ResponseEntity<ErrorMessage> handleMismatchType(
+            MethodArgumentTypeMismatchException ex,
+            WebRequest request) {
 
-        return ResponseEntity.badRequest().body(new ErrorMessage(String.format("wrong data type for parameter: %s", parameter)));
+        String parameter = ex.getParameter().getParameterName();
+        log.error("Неверный тип данных для параметра: {}", parameter);
+
+        return ResponseEntity.badRequest()
+                .body(ErrorMessage.builder()
+                        .timestamp(LocalDateTime.now())
+                        .message(String.format("Неверный тип данных для параметра: %s", parameter))
+                        .path(request.getDescription(false).replace("uri=", ""))
+                        .build());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -61,7 +80,7 @@ public class GlobalExceptionHandler {
         FieldError fieldError = ex.getFieldError();
         String message = fieldError != null ? fieldError.getField() + " " + fieldError.getDefaultMessage() : ex.getMessage();
         log.error(message);
-        return ResponseEntity.badRequest().body(new ErrorMessage(message));
+        return ResponseEntity.badRequest().body(new ErrorMessage());
     }
 
 }

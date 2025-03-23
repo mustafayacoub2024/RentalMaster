@@ -1,18 +1,14 @@
 package com.example.rentalmaster.model.db.entity;
 
-import com.example.rentalmaster.model.enums.Availability;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.example.rentalmaster.model.enums.TypeTechnique;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.util.List;
-
 
 /*данные о технике, которая имеется в компании*/
-
+/*http://localhost:8080/technique.html*/
 
 @Getter
 @Setter
@@ -25,25 +21,25 @@ public class Technique {
     @Column(name = "stateNumber")
     private String stateNumber;
 
+    @Column(name = "yearOfProduction")
+    private String yearOfProduction;
 
+    @Column(name = "loadCapacity")
+    private String loadCapacity; //грузоподьёмность
 
-    @ManyToOne
-    @JsonBackReference(value = "technique_branch")
-    @JoinColumn(name = "branchId")
-    private Branches branch;
+    @Column(name = "weight")
+    private String weight; //масса
 
-
-
+    @Column(name = "color")
+    private String color;
 
     @Column(name = "baseCost")
-    private Double baseCost; //Базовая стоимость аренды
+    private Double baseCost; //Базовая стоимость аренды за 1 час в руб
 
-    @Column(name = "availability")
-    private Availability availability; //Доступность технике
+    @Column(name = "typeTechnique")
+    private TypeTechnique typeTechnique;
 
-    @OneToMany(mappedBy = "techniques")
-    @JsonManagedReference(value = "technique_order")
-    private List<RentalOrder> rentalOrders;
+
 
 
 }
