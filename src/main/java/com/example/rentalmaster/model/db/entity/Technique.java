@@ -25,15 +25,14 @@ public class Technique {
     @Column(name = "stateNumber")
     private String stateNumber;
 
+
+
     @ManyToOne
     @JsonBackReference(value = "technique_branch")
     @JoinColumn(name = "branchId")
     private Branches branch;
 
-    @OneToOne
-    @JsonManagedReference(value = "technique_type")
-    @JoinColumn(name = "technique_type_id")
-    private TechnigueType type;
+
 
 
     @Column(name = "baseCost")

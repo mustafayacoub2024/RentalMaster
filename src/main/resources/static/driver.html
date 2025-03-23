@@ -51,6 +51,15 @@
             background-color: #e9ecef;
             border-radius: 4px;
         }
+        .action-selector {
+            margin-bottom: 20px;
+        }
+        .action-selector select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
@@ -58,7 +67,15 @@
     <h1>Управление водителями</h1>
 </div>
 <div class="container">
-    <div class="form-section">
+    <div class="action-selector">
+        <label for="action">Выберите действие:</label>
+        <select id="action" onchange="toggleForm()">
+            <option value="create">Создать водителя</option>
+            <option value="delete">Удалить водителя</option>
+        </select>
+    </div>
+
+    <div id="createForm" class="form-section">
         <h2>Создать водителя</h2>
         <input type="text" id="personalNumber" placeholder="Табельный номер">
         <input type="text" id="lastName" placeholder="Фамилия">
@@ -69,7 +86,7 @@
         <div class="response" id="addDriverResponse"></div>
     </div>
 
-    <div class="form-section">
+    <div id="deleteForm" class="form-section" style="display: none;">
         <h2>Удалить водителя</h2>
         <input type="text" id="deletePersonalNumber" placeholder="Табельный номер">
         <button onclick="deleteDriver()">Удалить водителя</button>
@@ -78,6 +95,12 @@
 </div>
 
 <script>
+    function toggleForm() {
+        const action = document.getElementById('action').value;
+        document.getElementById('createForm').style.display = action === 'create' ? 'block' : 'none';
+        document.getElementById('deleteForm').style.display = action === 'delete' ? 'block' : 'none';
+    }
+
     async function addDriver() {
         const personalNumber = document.getElementById('personalNumber').value;
         const lastName = document.getElementById('lastName').value;

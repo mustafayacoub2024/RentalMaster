@@ -2,14 +2,12 @@ package com.example.rentalmaster.model.db.entity;
 /*Информация об юр лицах, которые арендуют технику */
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,8 +22,11 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity(name = "clients")
 public class Clients {
-    @Id
-    private UUID clientsId;
+
+//    @Id
+//    @UuidGenerator(style = UuidGenerator.Style.TIME)
+//    @Column(name = "clients_id", updatable = false, nullable = false)
+//    private UUID clientsId;
 
     @Column(name = "nameOfOrganization") //название организаций
     private String nameOfOrganization;
@@ -36,6 +37,7 @@ public class Clients {
     @Column(name = "actualAddress") //Фактический адрес
     private String actualAddress;
 
+    @Id
     @Column(name = "inn")
     private String inn;
 
@@ -71,9 +73,5 @@ public class Clients {
 
     @Column(name = "phone")
     private String phone;
-
-    @OneToMany(mappedBy = "clients")
-    @JsonManagedReference(value = "client_order")
-    private List<RentalOrder> rentalOrders;
 
 }
