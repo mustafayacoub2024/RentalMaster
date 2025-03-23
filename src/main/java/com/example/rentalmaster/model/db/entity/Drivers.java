@@ -1,6 +1,7 @@
 package com.example.rentalmaster.model.db.entity;
 
-/*данные о сотрудниках */
+/*данные о сотрудниках
+* html страница: http://localhost:8080/driver.html */
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
