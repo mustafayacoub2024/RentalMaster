@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление сотрудниками</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: #1E90FF;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            margin-right: 5px;
+            border-radius: 5px 5px 0 0;
+        }
+        .tab.active {
+            background-color: #1E90FF;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-top: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #1E90FF;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #187bcd;
+        }
+        .response {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        .response h3 {
+            margin-top: 0;
+            color: #1E90FF;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    Управление сотрудниками
+</div>
+
+<div class="container">
+    <div class="tabs">
+        <div class="tab active" onclick="openTab(event, 'create')">Создать сотрудника</div>
+        <div class="tab" onclick="openTab(event, 'update')">Обновить данные</div>
+        <div class="tab" onclick="openTab(event, 'delete')">Удалить сотрудника</div>
+    </div>
+
+    <!-- Создание сотрудника -->
+    <div id="create" class="tab-content active">
+        <h2>Создать нового сотрудника</h2>
+        <div class="form-group">
+            <label for="createPersonalNumber">Табельный номер:</label>
+            <input type="text" id="createPersonalNumber" required>
+        </div>
+        <div class="form-group">
+            <label for="createLastName">Фамилия:</label>
+            <input type="text" id="createLastName" required>
+        </div>
+        <div class="form-group">
+            <label for="createFirstName">Имя:</label>
+            <input type="text" id="createFirstName" required>
+        </div>
+        <div class="form-group">
+            <label for="createEmail">Email:</label>
+            <input type="email" id="createEmail" required>
+        </div>
+        <div class="form-group">
+            <label for="createPhone">Телефон:</label>
+            <input type="text" id="createPhone" required>
+        </div>
+        <div class="form-group">
+            <label for="createRole">Роль:</label>
+            <select id="createRole">
+                <option value="Менеджер">Менеджер</option>
+                <option value="Директор">Директор</option>
+            </select>
+        </div>
+        <button onclick="createEmployee()">Создать</button>
+        <div id="createResponse" class="response" style="display: none;">
+            <h3>Результат:</h3>
+            <p id="createResponseText"></p>
+        </div>
+    </div>
+
+    <!-- Обновление сотрудника -->
+    <div id="update" class="tab-content">
+        <h2>Обновить данные сотрудника</h2>
+        <div class="form-group">
+            <label for="updatePersonalNumber">Табельный номер (для поиска):</label>
+            <input type="text" id="updatePersonalNumber" required>
+        </div>
+        <div class="form-group">
+            <label for="updateLastName">Новая фамилия:</label>
+            <input type="text" id="updateLastName">
+        </div>
+        <div class="form-group">
+            <label for="updateFirstName">Новое имя:</label>
+            <input type="text" id="updateFirstName">
+        </div>
+        <div class="form-group">
+            <label for="updateEmail">Новый email:</label>
+            <input type="email" id="updateEmail">
+        </div>
+        <div class="form-group">
+            <label for="updatePhone">Новый телефон:</label>
+            <input type="text" id="updatePhone">
+        </div>
+        <div class="form-group">
+            <label for="updateRole">Новая роль:</label>
+            <select id="updateRole">
+                <option value="">Не изменять</option>
+                <option value="Менеджер">Менеджер</option>
+                <option value="Директор">Директор</option>
+            </select>
+        </div>
+        <button onclick="updateEmployee()">Обновить</button>
+        <div id="updateResponse" class="response" style="display: none;">
+            <h3>Результат:</h3>
+            <p id="updateResponseText"></p>
+        </div>
+    </div>
+
+    <!-- Удаление сотрудника -->
+    <div id="delete" class="tab-content">
+        <h2>Удалить сотрудника</h2>
+        <div class="form-group">
+            <label for="deletePersonalNumber">Табельный номер:</label>
+            <input type="text" id="deletePersonalNumber" required>
+        </div>
+        <button onclick="deleteEmployee()">Удалить</button>
+        <div id="deleteResponse" class="response" style="display: none;">
+            <h3>Результат:</h3>
+            <p id="deleteResponseText"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openTab(evt, tabName) {
+        // Скрыть все tab-content
+        const tabContents = document.getElementsByClassName("tab-content");
+        for (let i = 0; i < tabContents.length; i++) {
+            tabContents[i].classList.remove("active");
+        }
+
+        // Убрать active со всех tab
+        const tabs = document.getElementsByClassName("tab");
+        for (let i = 0; i < tabs.length; i++) {
+            tabs[i].classList.remove("active");
+        }
+
+        // Показать текущий tab-content и добавить active к текущей tab
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.classList.add("active");
+    }
+
+    function createEmployee() {
+        const personalNumber = document.getElementById("createPersonalNumber").value;
+        const lastName = document.getElementById("createLastName").value;
+        const firstName = document.getElementById("createFirstName").value;
+        const email = document.getElementById("createEmail").value;
+        const phone = document.getElementById("createPhone").value;
+        const role = document.getElementById("createRole").value;
+
+        const employeeData = {
+            personalNumber: personalNumber,
+            lastName: lastName,
+            firstName: firstName,
+            email: email,
+            phone: phone,
+            role: role
+        };
+
+        fetch('/employees', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(employeeData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                const responseDiv = document.getElementById("createResponse");
+                document.getElementById("createResponseText").textContent = data.message || "Сотрудник успешно создан";
+                responseDiv.style.display = "block";
+
+                // Очистка полей после успешного создания
+                if (!data.message) {
+                    document.getElementById("createPersonalNumber").value = "";
+                    document.getElementById("createLastName").value = "";
+                    document.getElementById("createFirstName").value = "";
+                    document.getElementById("createEmail").value = "";
+                    document.getElementById("createPhone").value = "";
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                document.getElementById("createResponseText").textContent = "Ошибка при создании сотрудника: " + error.message;
+                document.getElementById("createResponse").style.display = "block";
+            });
+    }
+
+    function updateEmployee() {
+        const personalNumber = document.getElementById("updatePersonalNumber").value;
+        const lastName = document.getElementById("updateLastName").value;
+        const firstName = document.getElementById("updateFirstName").value;
+        const email = document.getElementById("updateEmail").value;
+        const phone = document.getElementById("updatePhone").value;
+        const role = document.getElementById("updateRole").value;
+
+        const employeeData = {};
+        if (lastName) employeeData.lastName = lastName;
+        if (firstName) employeeData.firstName = firstName;
+        if (email) employeeData.email = email;
+        if (phone) employeeData.phone = phone;
+        if (role) employeeData.role = role;
+
+        fetch(`/employees/${personalNumber}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(employeeData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                const responseDiv = document.getElementById("updateResponse");
+                document.getElementById("updateResponseText").textContent = data.message || "Данные сотрудника успешно обновлены";
+                responseDiv.style.display = "block";
+
+                // Очистка полей после успешного обновления
+                if (!data.message) {
+                    document.getElementById("updateLastName").value = "";
+                    document.getElementById("updateFirstName").value = "";
+                    document.getElementById("updateEmail").value = "";
+                    document.getElementById("updatePhone").value = "";
+                    document.getElementById("updateRole").value = "";
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                document.getElementById("updateResponseText").textContent = "Ошибка при обновлении данных сотрудника: " + error.message;
+                document.getElementById("updateResponse").style.display = "block";
+            });
+    }
+
+    function deleteEmployee() {
+        const personalNumber = document.getElementById("deletePersonalNumber").value;
+
+        fetch(`/employees/${personalNumber}`, {
+            method: 'DELETE'
+        })
+            .then(response => response.json())
+            .then(data => {
+                const responseDiv = document.getElementById("deleteResponse");
+                document.getElementById("deleteResponseText").textContent = data.message || "Сотрудник успешно удален";
+                responseDiv.style.display = "block";
+
+                // Очистка поля после успешного удаления
+                if (!data.message) {
+                    document.getElementById("deletePersonalNumber").value = "";
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                document.getElementById("deleteResponseText").textContent = "Ошибка при удалении сотрудника: " + error.message;
+                document.getElementById("deleteResponse").style.display = "block";
+            });
+    }
+</script>
+</body>
+</html>

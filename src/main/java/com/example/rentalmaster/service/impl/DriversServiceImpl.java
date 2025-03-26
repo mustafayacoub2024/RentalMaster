@@ -1,6 +1,5 @@
 package com.example.rentalmaster.service.impl;
 
-
 import com.example.rentalmaster.model.db.entity.Drivers;
 import com.example.rentalmaster.model.db.repository.DriversRepository;
 import com.example.rentalmaster.model.dto.request.DriversRequest;
@@ -10,9 +9,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.sql.Driver;
 
 @Slf4j
 @Service

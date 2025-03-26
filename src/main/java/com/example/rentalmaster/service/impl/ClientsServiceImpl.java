@@ -1,17 +1,14 @@
 package com.example.rentalmaster.service.impl;
 
 import com.example.rentalmaster.model.db.entity.Clients;
-import com.example.rentalmaster.model.db.entity.Drivers;
 import com.example.rentalmaster.model.db.repository.ClientsRepository;
 import com.example.rentalmaster.model.dto.request.ClientsRequest;
 import com.example.rentalmaster.model.dto.response.ClientsResponse;
-import com.example.rentalmaster.model.dto.response.DriverResponse;
 import com.example.rentalmaster.service.ClientsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import java.util.UUID;
 
 @Slf4j
 @Service

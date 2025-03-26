@@ -1,6 +1,6 @@
 package com.example.rentalmaster.model.db.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -23,11 +23,6 @@ public class Branches {
     @Id
     @Column(name= "branchId")
     private UUID branchId;
-
-    @ManyToOne
-    @JsonBackReference(value = "branch_location")
-    @JoinColumn(name = "locationId")
-    private Location location;
 
     @OneToMany(mappedBy = "branch")
     @JsonManagedReference(value = "branch_order")
