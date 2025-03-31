@@ -20,13 +20,16 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity(name = "branches")
 public class Branches {
+
     @Id
-    @Column(name= "branchId")
+    @Column(name = "branchId")
     private UUID branchId;
 
-    @OneToMany(mappedBy = "branch")
-    @JsonManagedReference(value = "branch_order")
-    private List<RentalOrder> rentalOrders;
+    @Column(name = "city")
+    private String city;
+
+    @Column(name = "address")
+    private String address;
 
     @Column(name = "email")
     @Email
@@ -34,10 +37,11 @@ public class Branches {
 
     @Column(name = "phone")
     private String phone;
+
+    @OneToOne
+    private Employees employees;
+
+    @OneToMany
+    private List<Technique> techniques;
+
 }
-
-
-
-
-
-

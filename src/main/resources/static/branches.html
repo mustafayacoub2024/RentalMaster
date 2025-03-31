@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление филиалами</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: #1E90FF;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            margin-right: 5px;
+            border-radius: 5px 5px 0 0;
+        }
+        .tab.active {
+            background-color: #1E90FF;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-top: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #1E90FF;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #187bcd;
+        }
+        .response {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        .response h3 {
+            margin-top: 0;
+            color: #1E90FF;
+        }
+        .technique-list {
+            margin-top: 20px;
+        }
+        .technique-item {
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 5px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    Управление филиалами
+</div>
+
+<div class="container">
+    <div class="tabs">
+        <div class="tab active" onclick="openTab(event, 'create')">Создать филиал</div>
+        <div class="tab" onclick="openTab(event, 'update')">Обновить филиал</div>
+        <div class="tab" onclick="openTab(event, 'delete')">Удалить филиал</div>
+        <div class="tab" onclick="openTab(event, 'technique')">Управление техникой</div>
+    </div>
+
+    <!-- Создание филиала -->
+    <div id="create" class="tab-content active">
+        <h2>Создать новый филиал</h2>
+        <div class="form-group">
+            <label for="createCity">Город:</label>
+            <input type="text" id="createCity" required>
+        </div>
+        <div class="form-group">
+            <label for="createAddress">Адрес:</label>
+            <input type="text" id="createAddress" required>
+        </div>
+        <div class="form-group">
+            <label for="createEmail">Email:</label>
+            <input type="email" id="createEmail" required>
+        </div>
+        <div class="form-group">
+            <label for="createPhone">Телефон:</label>
+            <input type="text" id="createPhone" required>
+        </div>
+        <div class="form-group">
+            <label for="createEmployeeId">Табельный номер сотрудника (UUID):</label>
+            <input type="text" id="createEmployeeId" required>
+        </div>
+        <button onclick="createBranch()">Создать</button>
+        <div id="createResponse" class="response" style="display: none;">
+            <h3>Результат:</h3>
+            <p id="createResponseText"></p>
+        </div>
+    </div>
+
+    <!-- Обновление филиала -->
+    <div id="update" class="tab-content">
+        <h2>Обновить данные филиала</h2>
+        <div class="form-group">
+            <label for="updateBranchId">ID филиала (UUID):</label>
+            <input type="text" id="updateBranchId" required>
+        </div>
+        <div class="form-group">
+            <label for="updateCity">Новый город:</label>
+            <input type="text" id="updateCity">
+        </div>
+        <div class="form-group">
+            <label for="updateAddress">Новый адрес:</label>
+            <input type="text" id="updateAddress">
+        </div>
+        <div class="form-group">
+            <label for="updateEmail">Новый email:</label>
+            <input type="email" id="updateEmail">
+        </div>
+        <div class="form-group">
+            <label for="updatePhone">Новый телефон:</label>
+            <input type="text" id="updatePhone">
+        </div>
+        <div class="form-group">
+            <label for="updateEmployeeId">Новый табельный номер сотрудника (UUID):</label>
+            <input type="text" id="updateEmployeeId">
+        </div>
+        <button onclick="updateBranch()">Обновить</button>
+        <div id="updateResponse" class="response" style="display: none;">
+            <h3>Результат:</h3>
+            <p id="updateResponseText"></p>
+        </div>
+    </div>
+
+    <!-- Удаление филиала -->
+    <div id="delete" class="tab-content">
+        <h2>Удалить филиал</h2>
+        <div class="form-group">
+            <label for="deleteBranchId">ID филиала (UUID):</label>
+            <input type="text" id="deleteBranchId" required>
+        </div>
+        <button onclick="deleteBranch()">Удалить</button>
+        <div id="deleteResponse" class="response" style="display: none;">
+            <h3>Результат:</h3>
+            <p id="deleteResponseText"></p>
+        </div>
+    </div>
+
+    <!-- Управление техникой -->
+    <div id="technique" class="tab-content">
+        <h2>Управление техникой в филиале</h2>
+        <div class="form-group">
+            <label for="techBranchId">ID филиала (UUID):</label>
+            <input type="text" id="techBranchId" required>
+        </div>
+
+        <h3>Добавить технику</h3>
+        <div class="form-group">
+            <label for="addTechStateNumber">Госномер техники:</label>
+            <input type="text" id="addTechStateNumber" required>
+        </div>
+        <button onclick="addTechnique()">Добавить технику</button>
+
+        <h3>Техника в филиале</h3>
+        <button onclick="getTechniques()">Показать технику</button>
+        <div id="techniquesResponse" class="response" style="display: none;">
+            <h3>Результат:</h3>
+            <div id="techniquesList" class="technique-list"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openTab(evt, tabName) {
+        // Скрыть все tab-content
+        const tabContents = document.getElementsByClassName("tab-content");
+        for (let i = 0; i < tabContents.length; i++) {
+            tabContents[i].classList.remove("active");
+        }
+
+        // Убрать active со всех tab
+        const tabs = document.getElementsByClassName("tab");
+        for (let i = 0; i < tabs.length; i++) {
+            tabs[i].classList.remove("active");
+        }
+
+        // Показать текущий tab-content и добавить active к текущей tab
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.classList.add("active");
+    }
+
+    function createBranch() {
+        const city = document.getElementById("createCity").value;
+        const address = document.getElementById("createAddress").value;
+        const email = document.getElementById("createEmail").value;
+        const phone = document.getElementById("createPhone").value;
+        const employeeId = document.getElementById("createEmployeeId").value;
+
+        const branchData = {
+            city: city,
+            address: address,
+            email: email,
+            phone: phone,
+            employees: {
+                personalNumber: employeeId
+            }
+        };
+
+        fetch('/branches', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(branchData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                const responseDiv = document.getElementById("createResponse");
+                document.getElementById("createResponseText").textContent = data.message || "Филиал успешно создан";
+                responseDiv.style.display = "block";
+
+                // Очистка полей после успешного создания
+                if (!data.message) {
+                    document.getElementById("createCity").value = "";
+                    document.getElementById("createAddress").value = "";
+                    document.getElementById("createEmail").value = "";
+                    document.getElementById("createPhone").value = "";
+                    document.getElementById("createEmployeeId").value = "";
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                document.getElementById("createResponseText").textContent = "Ошибка при создании филиала: " + error.message;
+                document.getElementById("createResponse").style.display = "block";
+            });
+    }
+
+    function updateBranch() {
+        const branchId = document.getElementById("updateBranchId").value;
+        const city = document.getElementById("updateCity").value;
+        const address = document.getElementById("updateAddress").value;
+        const email = document.getElementById("updateEmail").value;
+        const phone = document.getElementById("updatePhone").value;
+        const employeeId = document.getElementById("updateEmployeeId").value;
+
+        const branchData = {};
+        if (city) branchData.city = city;
+        if (address) branchData.address = address;
+        if (email) branchData.email = email;
+        if (phone) branchData.phone = phone;
+        if (employeeId) branchData.employees = { personalNumber: employeeId };
+
+        fetch(`/branches/${branchId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(branchData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                const responseDiv = document.getElementById("updateResponse");
+                document.getElementById("updateResponseText").textContent = data.message || "Данные филиала успешно обновлены";
+                responseDiv.style.display = "block";
+
+                // Очистка полей после успешного обновления
+                if (!data.message) {
+                    document.getElementById("updateCity").value = "";
+                    document.getElementById("updateAddress").value = "";
+                    document.getElementById("updateEmail").value = "";
+                    document.getElementById("updatePhone").value = "";
+                    document.getElementById("updateEmployeeId").value = "";
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                document.getElementById("updateResponseText").textContent = "Ошибка при обновлении данных филиала: " + error.message;
+                document.getElementById("updateResponse").style.display = "block";
+            });
+    }
+
+    function deleteBranch() {
+        const branchId = document.getElementById("deleteBranchId").value;
+
+        fetch(`/branches/${branchId}`, {
+            method: 'DELETE'
+        })
+            .then(response => response.json())
+            .then(data => {
+                const responseDiv = document.getElementById("deleteResponse");
+                document.getElementById("deleteResponseText").textContent = data.message || "Филиал успешно удален";
+                responseDiv.style.display = "block";
+
+                // Очистка поля после успешного удаления
+                if (!data.message) {
+                    document.getElementById("deleteBranchId").value = "";
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                document.getElementById("deleteResponseText").textContent = "Ошибка при удалении филиала: " + error.message;
+                document.getElementById("deleteResponse").style.display = "block";
+            });
+    }
+
+    function addTechnique() {
+        const branchId = document.getElementById("techBranchId").value;
+        const stateNumber = document.getElementById("addTechStateNumber").value;
+
+        fetch(`/branches/${branchId}/techniques/${stateNumber}`, {
+            method: 'POST'
+        })
+            .then(response => response.json())
+            .then(data => {
+                const responseDiv = document.getElementById("techniquesResponse");
+                document.getElementById("techniquesResponse").querySelector("h3").textContent = "Результат: " + (data.message || "Техника успешно добавлена");
+                responseDiv.style.display = "block";
+
+                // Очистка поля после успешного добавления
+                if (!data.message) {
+                    document.getElementById("addTechStateNumber").value = "";
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                document.getElementById("techniquesResponse").querySelector("h3").textContent = "Ошибка: " + error.message;
+                document.getElementById("techniquesResponse").style.display = "block";
+            });
+    }
+
+    function getTechniques() {
+        const branchId = document.getElementById("techBranchId").value;
+
+        fetch(`/branches/${branchId}/techniques`)
+            .then(response => response.json())
+            .then(data => {
+                const techniquesList = document.getElementById("techniquesList");
+                techniquesList.innerHTML = "";
+
+                if (data.length === 0) {
+                    techniquesList.innerHTML = "<p>В этом филиале нет техники</p>";
+                } else {
+                    data.forEach(tech => {
+                        const techItem = document.createElement("div");
+                        techItem.className = "technique-item";
+                        techItem.innerHTML = `
+                            <p><strong>Госномер:</strong> ${tech.stateNumber}</p>
+                            <p><strong>Тип:</strong> ${tech.typeTechnique}</p>
+                            <p><strong>Год выпуска:</strong> ${tech.yearOfProduction}</p>
+                            <p><strong>Грузоподъемность:</strong> ${tech.loadCapacity}</p>
+                        `;
+                        techniquesList.appendChild(techItem);
+                    });
+                }
+
+                document.getElementById("techniquesResponse").style.display = "block";
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                document.getElementById("techniquesResponse").querySelector("h3").textContent = "Ошибка: " + error.message;
+                document.getElementById("techniquesResponse").style.display = "block";
+            });
+    }
+</script>
+</body>
+</html>

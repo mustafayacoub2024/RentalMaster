@@ -4,6 +4,7 @@ import com.example.rentalmaster.model.enums.Roles;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -39,6 +40,5 @@ public class Employees {
 
     @Column(name = "role")
     private Roles role;
-
 
 }
