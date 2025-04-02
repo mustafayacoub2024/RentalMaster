@@ -1,7 +1,5 @@
 package com.example.rentalmaster.model.db.entity;
 
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
@@ -13,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 /*Филиал, в каждом городе свой отдельный филиал*/
+/*http://localhost:8080/branches.html*/
 
 @Getter
 @Setter
@@ -20,13 +19,16 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity(name = "branches")
 public class Branches {
+
     @Id
-    @Column(name= "branchId")
+    @Column(name = "branchId")
     private UUID branchId;
 
-    @OneToMany(mappedBy = "branch")
-    @JsonManagedReference(value = "branch_order")
-    private List<RentalOrder> rentalOrders;
+    @Column(name = "city")
+    private String city;
+
+    @Column(name = "address")
+    private String address;
 
     @Column(name = "email")
     @Email
@@ -34,10 +36,14 @@ public class Branches {
 
     @Column(name = "phone")
     private String phone;
+
+    @Column(name = "коэфициент наценки")
+    private double coefficient;
+
+    @OneToOne
+    private Employees employees;
+
+    @OneToMany
+    private List<Technique> techniques;
+
 }
-
-
-
-
-
-

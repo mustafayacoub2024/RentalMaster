@@ -9,112 +9,230 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
         }
         .header {
-            background-color: #007BFF;
+            background-color: #1E90FF;
             color: white;
-            padding: 10px 20px;
+            padding: 15px 20px;
             text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
         }
-        .form-container {
-            margin: 20px;
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
             padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            margin-right: 5px;
+            border-radius: 5px 5px 0 0;
+        }
+        .tab.active {
+            background-color: #1E90FF;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-top: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
         }
         input, select, button {
             width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            margin-bottom: 20px;
-            border-radius: 5px;
+            padding: 8px;
             border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            margin-top: 5px;
         }
         button {
-            background-color: #007BFF;
+            background-color: #1E90FF;
             color: white;
+            padding: 10px 15px;
             border: none;
             cursor: pointer;
+            font-size: 16px;
         }
         button:hover {
-            background-color: #0056b3;
+            background-color: #187bcd;
+        }
+        .response {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        .error-message {
+            color: #d9534f;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 <div class="header">
-    <h1>Управление техникой</h1>
+    Управление техникой
 </div>
 
-<div class="form-container">
-    <h2>Действие</h2>
-    <select id="action" onchange="toggleForms()">
-        <option value="create">Создать технику</option>
-        <option value="update">Обновить технику</option>
-        <option value="delete">Удалить технику</option>
-    </select>
-</div>
+<div class="container">
+    <div class="tabs">
+        <div class="tab active" onclick="openTab(event, 'createTech')">Создать</div>
+        <div class="tab" onclick="openTab(event, 'updateTech')">Обновить</div>
+        <div class="tab" onclick="openTab(event, 'deleteTech')">Удалить</div>
+    </div>
 
-<div class="form-container" id="createForm">
-    <h2>Создать технику</h2>
-    <input type="text" id="createStateNumber" placeholder="Государственный номер">
-    <input type="text" id="createYear" placeholder="Год выпуска">
-    <input type="text" id="createLoadCapacity" placeholder="Грузоподъемность">
-    <input type="text" id="createWeight" placeholder="Масса">
-    <input type="text" id="createColor" placeholder="Цвет">
-    <input type="number" id="createBaseCost" placeholder="Базовая стоимость">
-    <select id="createType">
-        <option value="Экскаватор">Экскаватор</option>
-        <option value="Бульдозер">Бульдозер</option>
-        <option value="Автогрейдер">Автогрейдер</option>
-        <option value="Кран">Кран</option>
-        <option value="Асфальтоукладчик">Асфальтоукладчик</option>
-        <option value="Виброкаток">Виброкаток</option>
-        <option value="Бетононасос">Бетононасос</option>
-        <option value="Гидромолот">Гидромолот</option>
-    </select>
-    <button onclick="createTechnique()">Создать</button>
-</div>
+    <!-- Создание техники -->
+    <div id="createTech" class="tab-content active">
+        <h2>Новая техника</h2>
+        <div class="form-group">
+            <label for="createStateNumber">Госномер:</label>
+            <input type="text" id="createStateNumber" required>
+        </div>
+        <div class="form-group">
+            <label for="createYear">Год выпуска:</label>
+            <input type="text" id="createYear" required>
+        </div>
+        <div class="form-group">
+            <label for="createLoadCapacity">Грузоподъемность (кг):</label>
+            <input type="text" id="createLoadCapacity" required>
+        </div>
+        <div class="form-group">
+            <label for="createWeight">Масса (кг):</label>
+            <input type="text" id="createWeight" required>
+        </div>
+        <div class="form-group">
+            <label for="createColor">Цвет:</label>
+            <input type="text" id="createColor" required>
+        </div>
+        <div class="form-group">
+            <label for="createBaseCost">Базовая стоимость (₽/час):</label>
+            <input type="number" id="createBaseCost" required>
+        </div>
+        <div class="form-group">
+            <label for="createType">Тип техники:</label>
+            <select id="createType">
+                <option value="Экскаватор">Экскаватор</option>
+                <option value="Бульдозер">Бульдозер</option>
+                <option value="Автогрейдер">Автогрейдер</option>
+                <option value="Кран">Кран</option>
+                <option value="Асфальтоукладчик">Асфальтоукладчик</option>
+                <option value="Виброкаток">Виброкаток</option>
+                <option value="Бетононасос">Бетононасос</option>
+                <option value="Гидромолот">Гидромолот</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="createAvailability">Статус:</label>
+            <select id="createAvailability">
+                <option value="Доступно">Доступно</option>
+                <option value="Занято">Занято</option>
+                <option value="ТО">Техническое обслуживание</option>
+            </select>
+        </div>
+        <button onclick="createTechnique()">Создать</button>
+        <div id="createResponse" class="response" style="display: none;">
+            <p id="createResponseText"></p>
+        </div>
+    </div>
 
-<div class="form-container" id="updateForm" style="display: none;">
-    <h2>Обновить технику</h2>
-    <input type="text" id="updateStateNumber" placeholder="Государственный номер">
-    <input type="text" id="updateYear" placeholder="Год выпуска">
-    <input type="text" id="updateLoadCapacity" placeholder="Грузоподъемность">
-    <input type="text" id="updateWeight" placeholder="Масса">
-    <input type="text" id="updateColor" placeholder="Цвет">
-    <input type="number" id="updateBaseCost" placeholder="Базовая стоимость">
-    <select id="updateType">
-        <option value="Экскаватор">Экскаватор</option>
-        <option value="Бульдозер">Бульдозер</option>
-        <option value="Автогрейдер">Автогрейдер</option>
-        <option value="Кран">Кран</option>
-        <option value="Асфальтоукладчик">Асфальтоукладчик</option>
-        <option value="Виброкаток">Виброкаток</option>
-        <option value="Бетононасос">Бетононасос</option>
-        <option value="Гидромолот">Гидромолот</option>
-    </select>
-    <button onclick="updateTechnique()">Обновить</button>
-</div>
+    <!-- Обновление техники -->
+    <div id="updateTech" class="tab-content">
+        <h2>Обновление данных</h2>
+        <div class="form-group">
+            <label for="updateStateNumber">Госномер:</label>
+            <input type="text" id="updateStateNumber" required>
+        </div>
+        <div class="form-group">
+            <label for="updateYear">Новый год выпуска:</label>
+            <input type="text" id="updateYear">
+        </div>
+        <div class="form-group">
+            <label for="updateLoadCapacity">Новая грузоподъемность:</label>
+            <input type="text" id="updateLoadCapacity">
+        </div>
+        <div class="form-group">
+            <label for="updateWeight">Новая масса:</label>
+            <input type="text" id="updateWeight">
+        </div>
+        <div class="form-group">
+            <label for="updateColor">Новый цвет:</label>
+            <input type="text" id="updateColor">
+        </div>
+        <div class="form-group">
+            <label for="updateBaseCost">Новая стоимость:</label>
+            <input type="number" id="updateBaseCost">
+        </div>
+        <div class="form-group">
+            <label for="updateType">Тип техники:</label>
+            <select id="updateType">
+                <option value="Экскаватор">Экскаватор</option>
+                <option value="Бульдозер">Бульдозер</option>
+                <option value="Автогрейдер">Автогрейдер</option>
+                <option value="Кран">Кран</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="updateAvailability">Статус:</label>
+            <select id="updateAvailability">
+                <option value="Доступно">Доступно</option>
+                <option value="Занято">Занято</option>
+                <option value="ТО">Техническое обслуживание</option>
+            </select>
+        </div>
+        <button onclick="updateTechnique()">Обновить</button>
+        <div id="updateResponse" class="response" style="display: none;">
+            <p id="updateResponseText"></p>
+        </div>
+    </div>
 
-<div class="form-container" id="deleteForm" style="display: none;">
-    <h2>Удалить технику</h2>
-    <input type="text" id="deleteStateNumber" placeholder="Государственный номер">
-    <button onclick="deleteTechnique()">Удалить</button>
+    <!-- Удаление техники -->
+    <div id="deleteTech" class="tab-content">
+        <h2>Удаление техники</h2>
+        <div class="form-group">
+            <label for="deleteStateNumber">Госномер:</label>
+            <input type="text" id="deleteStateNumber" required>
+        </div>
+        <button onclick="deleteTechnique()">Удалить</button>
+        <div id="deleteResponse" class="response" style="display: none;">
+            <p id="deleteResponseText"></p>
+        </div>
+    </div>
 </div>
 
 <script>
-    // Функция для переключения видимости форм
-    function toggleForms() {
-        const action = document.getElementById('action').value;
-        document.getElementById('createForm').style.display = action === 'create' ? 'block' : 'none';
-        document.getElementById('updateForm').style.display = action === 'update' ? 'block' : 'none';
-        document.getElementById('deleteForm').style.display = action === 'delete' ? 'block' : 'none';
+    function openTab(evt, tabName) {
+        const tabContents = document.querySelectorAll('.tab-content');
+        tabContents.forEach(tab => tab.classList.remove('active'));
+
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => tab.classList.remove('active'));
+
+        document.getElementById(tabName).classList.add('active');
+        evt.currentTarget.classList.add('active');
     }
 
-    // Функция для создания техники
     async function createTechnique() {
         const technique = {
             stateNumber: document.getElementById('createStateNumber').value,
@@ -123,20 +241,30 @@
             weight: document.getElementById('createWeight').value,
             color: document.getElementById('createColor').value,
             baseCost: parseFloat(document.getElementById('createBaseCost').value),
-            typeTechnique: document.getElementById('createType').value
+            typeTechnique: document.getElementById('createType').value,
+            availability: document.getElementById('createAvailability').value
         };
-        const response = await fetch('/technique', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(technique)
-        });
-        const result = await response.json();
-        alert(result.message);
+
+        try {
+            const response = await fetch('/technique', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(technique)
+            });
+
+            const result = await response.json();
+            showResponse('createResponseText', result.message, !response.ok);
+            document.getElementById('createResponse').style.display = 'block';
+
+            if (response.ok) {
+                document.querySelectorAll('#createTech input, #createTech select').forEach(el => el.value = '');
+            }
+        } catch (error) {
+            showResponse('createResponseText', error.message, true);
+            document.getElementById('createResponse').style.display = 'block';
+        }
     }
 
-    // Функция для обновления техники
     async function updateTechnique() {
         const technique = {
             stateNumber: document.getElementById('updateStateNumber').value,
@@ -145,27 +273,51 @@
             weight: document.getElementById('updateWeight').value,
             color: document.getElementById('updateColor').value,
             baseCost: parseFloat(document.getElementById('updateBaseCost').value),
-            typeTechnique: document.getElementById('updateType').value
+            typeTechnique: document.getElementById('updateType').value,
+            availability: document.getElementById('updateAvailability').value
         };
-        const response = await fetch(`/technique/${technique.stateNumber}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(technique)
-        });
-        const result = await response.json();
-        alert(result.message);
+
+        try {
+            const response = await fetch(`/technique/${technique.stateNumber}`, {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(technique)
+            });
+
+            const result = await response.json();
+            showResponse('updateResponseText', result.message, !response.ok);
+            document.getElementById('updateResponse').style.display = 'block';
+        } catch (error) {
+            showResponse('updateResponseText', error.message, true);
+            document.getElementById('updateResponse').style.display = 'block';
+        }
     }
 
-    // Функция для удаления техники
     async function deleteTechnique() {
         const stateNumber = document.getElementById('deleteStateNumber').value;
-        const response = await fetch(`/technique/${stateNumber}`, {
-            method: 'DELETE'
-        });
-        const result = await response.json();
-        alert(result.message);
+
+        try {
+            const response = await fetch(`/technique/${stateNumber}`, {
+                method: 'DELETE'
+            });
+
+            const result = await response.json();
+            showResponse('deleteResponseText', result.message, !response.ok);
+            document.getElementById('deleteResponse').style.display = 'block';
+
+            if (response.ok) {
+                document.getElementById('deleteStateNumber').value = '';
+            }
+        } catch (error) {
+            showResponse('deleteResponseText', error.message, true);
+            document.getElementById('deleteResponse').style.display = 'block';
+        }
+    }
+
+    function showResponse(elementId, message, isError) {
+        const element = document.getElementById(elementId);
+        element.textContent = message;
+        element.className = isError ? 'error-message' : '';
     }
 </script>
 </body>
