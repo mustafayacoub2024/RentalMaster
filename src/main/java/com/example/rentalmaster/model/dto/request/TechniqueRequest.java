@@ -1,5 +1,6 @@
 package com.example.rentalmaster.model.dto.request;
 
+import com.example.rentalmaster.model.enums.Availability;
 import com.example.rentalmaster.model.enums.TypeTechnique;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
@@ -49,4 +50,7 @@ public class TechniqueRequest {
     @Schema(description = "Тип технике")
     private TypeTechnique typeTechnique;
 
+    @NotNull
+    @Schema(description = "Стутус")
+    private Availability availability;
 }

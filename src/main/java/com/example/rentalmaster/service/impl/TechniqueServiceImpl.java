@@ -51,6 +51,7 @@ public class TechniqueServiceImpl implements TechniqueService {
         technique.setLoadCapacity(techniqueRequest.getLoadCapacity());
         technique.setYearOfProduction(techniqueRequest.getYearOfProduction());
         technique.setBaseCost(techniqueRequest.getBaseCost());
+        technique.setAvailability(techniqueRequest.getAvailability());
 
         Technique updatedTechnique = techniqueRepository.save(technique);
         TechniqueResponse techniqueResponse = objectMapper.convertValue(updatedTechnique, TechniqueResponse.class);

@@ -43,6 +43,10 @@ public class BranchesRequest {
     private String phone;
 
     @NotNull
+    @Schema(description = "коэфициент наценки")
+    private double coefficient;
+
+    @NotNull
     @Schema(description = "Персональный табельный номер сотрудника")
     private Employees employees;
 

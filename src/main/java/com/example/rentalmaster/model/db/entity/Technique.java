@@ -1,5 +1,6 @@
 package com.example.rentalmaster.model.db.entity;
 
+import com.example.rentalmaster.model.enums.Availability;
 import com.example.rentalmaster.model.enums.TypeTechnique;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -38,6 +39,9 @@ public class Technique {
 
     @Column(name = "typeTechnique")
     private TypeTechnique typeTechnique;
+
+    @Column(name = "Статус")
+    private Availability availability;
 
 
 

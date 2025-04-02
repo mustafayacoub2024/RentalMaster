@@ -97,6 +97,11 @@
             border: 1px solid #ddd;
             margin-bottom: 5px;
             border-radius: 4px;
+            background-color: #fff;
+        }
+        .error-message {
+            color: #d9534f;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -118,23 +123,27 @@
         <h2>Создать новый филиал</h2>
         <div class="form-group">
             <label for="createCity">Город:</label>
-            <input type="text" id="createCity" required>
+            <input type="text" id="createCity" required placeholder="Введите город">
         </div>
         <div class="form-group">
             <label for="createAddress">Адрес:</label>
-            <input type="text" id="createAddress" required>
+            <input type="text" id="createAddress" required placeholder="Введите адрес">
         </div>
         <div class="form-group">
             <label for="createEmail">Email:</label>
-            <input type="email" id="createEmail" required>
+            <input type="email" id="createEmail" required placeholder="Введите email">
         </div>
         <div class="form-group">
             <label for="createPhone">Телефон:</label>
-            <input type="text" id="createPhone" required>
+            <input type="text" id="createPhone" required placeholder="Введите телефон">
         </div>
         <div class="form-group">
             <label for="createEmployeeId">Табельный номер сотрудника (UUID):</label>
-            <input type="text" id="createEmployeeId" required>
+            <input type="text" id="createEmployeeId" required placeholder="Введите UUID сотрудника">
+        </div>
+        <div class="form-group">
+            <label for="createCoefficient">Коэфициент наценки:</label>
+            <input type="text" id="createCoefficient" required placeholder="Введите коэфициент наценки">
         </div>
         <button onclick="createBranch()">Создать</button>
         <div id="createResponse" class="response" style="display: none;">
@@ -148,27 +157,31 @@
         <h2>Обновить данные филиала</h2>
         <div class="form-group">
             <label for="updateBranchId">ID филиала (UUID):</label>
-            <input type="text" id="updateBranchId" required>
+            <input type="text" id="updateBranchId" required placeholder="Введите UUID филиала">
         </div>
         <div class="form-group">
             <label for="updateCity">Новый город:</label>
-            <input type="text" id="updateCity">
+            <input type="text" id="updateCity" placeholder="Введите новый город">
         </div>
         <div class="form-group">
             <label for="updateAddress">Новый адрес:</label>
-            <input type="text" id="updateAddress">
+            <input type="text" id="updateAddress" placeholder="Введите новый адрес">
         </div>
         <div class="form-group">
             <label for="updateEmail">Новый email:</label>
-            <input type="email" id="updateEmail">
+            <input type="email" id="updateEmail" placeholder="Введите новый email">
         </div>
         <div class="form-group">
             <label for="updatePhone">Новый телефон:</label>
-            <input type="text" id="updatePhone">
+            <input type="text" id="updatePhone" placeholder="Введите новый телефон">
         </div>
         <div class="form-group">
             <label for="updateEmployeeId">Новый табельный номер сотрудника (UUID):</label>
-            <input type="text" id="updateEmployeeId">
+            <input type="text" id="updateEmployeeId" placeholder="Введите новый UUID сотрудника">
+        </div>
+        <div class="form-group">
+            <label for="updateCoefficient">Новый коэфициент наценки:</label>
+            <input type="text" id="updateCoefficient" placeholder="Введите новый коэфициент наценки">
         </div>
         <button onclick="updateBranch()">Обновить</button>
         <div id="updateResponse" class="response" style="display: none;">
@@ -182,7 +195,7 @@
         <h2>Удалить филиал</h2>
         <div class="form-group">
             <label for="deleteBranchId">ID филиала (UUID):</label>
-            <input type="text" id="deleteBranchId" required>
+            <input type="text" id="deleteBranchId" required placeholder="Введите UUID филиала">
         </div>
         <button onclick="deleteBranch()">Удалить</button>
         <div id="deleteResponse" class="response" style="display: none;">
@@ -196,15 +209,19 @@
         <h2>Управление техникой в филиале</h2>
         <div class="form-group">
             <label for="techBranchId">ID филиала (UUID):</label>
-            <input type="text" id="techBranchId" required>
+            <input type="text" id="techBranchId" required placeholder="Введите UUID филиала">
         </div>
 
         <h3>Добавить технику</h3>
         <div class="form-group">
             <label for="addTechStateNumber">Госномер техники:</label>
-            <input type="text" id="addTechStateNumber" required>
+            <input type="text" id="addTechStateNumber" required placeholder="Введите госномер техники">
         </div>
         <button onclick="addTechnique()">Добавить технику</button>
+        <div id="addTechResponse" class="response" style="display: none;">
+            <h3>Результат:</h3>
+            <p id="addTechResponseText"></p>
+        </div>
 
         <h3>Техника в филиале</h3>
         <button onclick="getTechniques()">Показать технику</button>
@@ -217,19 +234,16 @@
 
 <script>
     function openTab(evt, tabName) {
-        // Скрыть все tab-content
         const tabContents = document.getElementsByClassName("tab-content");
         for (let i = 0; i < tabContents.length; i++) {
             tabContents[i].classList.remove("active");
         }
 
-        // Убрать active со всех tab
         const tabs = document.getElementsByClassName("tab");
         for (let i = 0; i < tabs.length; i++) {
             tabs[i].classList.remove("active");
         }
 
-        // Показать текущий tab-content и добавить active к текущей tab
         document.getElementById(tabName).classList.add("active");
         evt.currentTarget.classList.add("active");
     }
@@ -240,12 +254,20 @@
         const email = document.getElementById("createEmail").value;
         const phone = document.getElementById("createPhone").value;
         const employeeId = document.getElementById("createEmployeeId").value;
+        const coefficient = document.getElementById("createCoefficient").value;
+
+        if (!city || !address || !email || !phone || !employeeId) {
+            showError("createResponseText", "Пожалуйста, заполните все обязательные поля");
+            document.getElementById("createResponse").style.display = "block";
+            return;
+        }
 
         const branchData = {
             city: city,
             address: address,
             email: email,
             phone: phone,
+            coefficient: coefficient,
             employees: {
                 personalNumber: employeeId
             }
@@ -258,11 +280,16 @@
             },
             body: JSON.stringify(branchData)
         })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.message || 'Ошибка сервера'); });
+                }
+                return response.json();
+            })
             .then(data => {
-                const responseDiv = document.getElementById("createResponse");
                 document.getElementById("createResponseText").textContent = data.message || "Филиал успешно создан";
-                responseDiv.style.display = "block";
+                document.getElementById("createResponseText").className = "";
+                document.getElementById("createResponse").style.display = "block";
 
                 // Очистка полей после успешного создания
                 if (!data.message) {
@@ -271,11 +298,11 @@
                     document.getElementById("createEmail").value = "";
                     document.getElementById("createPhone").value = "";
                     document.getElementById("createEmployeeId").value = "";
+                    document.getElementById("createCoefficient").value = "";
                 }
             })
-            .catch((error) => {
-                console.error('Error:', error);
-                document.getElementById("createResponseText").textContent = "Ошибка при создании филиала: " + error.message;
+            .catch(error => {
+                showError("createResponseText", error.message);
                 document.getElementById("createResponse").style.display = "block";
             });
     }
@@ -287,13 +314,27 @@
         const email = document.getElementById("updateEmail").value;
         const phone = document.getElementById("updatePhone").value;
         const employeeId = document.getElementById("updateEmployeeId").value;
+        const coefficient = document.getElementById("updateCoefficient").value;
+
+        if (!branchId) {
+            showError("updateResponseText", "Пожалуйста, укажите ID филиала");
+            document.getElementById("updateResponse").style.display = "block";
+            return;
+        }
 
         const branchData = {};
         if (city) branchData.city = city;
         if (address) branchData.address = address;
         if (email) branchData.email = email;
         if (phone) branchData.phone = phone;
+        if (coefficient) branchData.coefficient = coefficient;
         if (employeeId) branchData.employees = { personalNumber: employeeId };
+
+        if (Object.keys(branchData).length === 0) {
+            showError("updateResponseText", "Пожалуйста, укажите хотя бы одно поле для обновления");
+            document.getElementById("updateResponse").style.display = "block";
+            return;
+        }
 
         fetch(`/branches/${branchId}`, {
             method: 'PUT',
@@ -302,11 +343,16 @@
             },
             body: JSON.stringify(branchData)
         })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.message || 'Ошибка сервера'); });
+                }
+                return response.json();
+            })
             .then(data => {
-                const responseDiv = document.getElementById("updateResponse");
                 document.getElementById("updateResponseText").textContent = data.message || "Данные филиала успешно обновлены";
-                responseDiv.style.display = "block";
+                document.getElementById("updateResponseText").className = "";
+                document.getElementById("updateResponse").style.display = "block";
 
                 // Очистка полей после успешного обновления
                 if (!data.message) {
@@ -315,11 +361,11 @@
                     document.getElementById("updateEmail").value = "";
                     document.getElementById("updatePhone").value = "";
                     document.getElementById("updateEmployeeId").value = "";
+                    document.getElementById("updateCoefficient").value = "";
                 }
             })
-            .catch((error) => {
-                console.error('Error:', error);
-                document.getElementById("updateResponseText").textContent = "Ошибка при обновлении данных филиала: " + error.message;
+            .catch(error => {
+                showError("updateResponseText", error.message);
                 document.getElementById("updateResponse").style.display = "block";
             });
     }
@@ -327,23 +373,33 @@
     function deleteBranch() {
         const branchId = document.getElementById("deleteBranchId").value;
 
+        if (!branchId) {
+            showError("deleteResponseText", "Пожалуйста, укажите ID филиала");
+            document.getElementById("deleteResponse").style.display = "block";
+            return;
+        }
+
         fetch(`/branches/${branchId}`, {
             method: 'DELETE'
         })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.message || 'Ошибка сервера'); });
+                }
+                return response.json();
+            })
             .then(data => {
-                const responseDiv = document.getElementById("deleteResponse");
                 document.getElementById("deleteResponseText").textContent = data.message || "Филиал успешно удален";
-                responseDiv.style.display = "block";
+                document.getElementById("deleteResponseText").className = "";
+                document.getElementById("deleteResponse").style.display = "block";
 
                 // Очистка поля после успешного удаления
                 if (!data.message) {
                     document.getElementById("deleteBranchId").value = "";
                 }
             })
-            .catch((error) => {
-                console.error('Error:', error);
-                document.getElementById("deleteResponseText").textContent = "Ошибка при удалении филиала: " + error.message;
+            .catch(error => {
+                showError("deleteResponseText", error.message);
                 document.getElementById("deleteResponse").style.display = "block";
             });
     }
@@ -352,59 +408,92 @@
         const branchId = document.getElementById("techBranchId").value;
         const stateNumber = document.getElementById("addTechStateNumber").value;
 
+        if (!branchId || !stateNumber) {
+            showError("addTechResponseText", "Пожалуйста, заполните все поля");
+            document.getElementById("addTechResponse").style.display = "block";
+            return;
+        }
+
         fetch(`/branches/${branchId}/techniques/${stateNumber}`, {
             method: 'POST'
         })
-            .then(response => response.json())
-            .then(data => {
-                const responseDiv = document.getElementById("techniquesResponse");
-                document.getElementById("techniquesResponse").querySelector("h3").textContent = "Результат: " + (data.message || "Техника успешно добавлена");
-                responseDiv.style.display = "block";
-
-                // Очистка поля после успешного добавления
-                if (!data.message) {
-                    document.getElementById("addTechStateNumber").value = "";
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.message || 'Ошибка сервера'); });
                 }
+                return response.json();
             })
-            .catch((error) => {
-                console.error('Error:', error);
-                document.getElementById("techniquesResponse").querySelector("h3").textContent = "Ошибка: " + error.message;
-                document.getElementById("techniquesResponse").style.display = "block";
+            .then(data => {
+                document.getElementById("addTechResponseText").textContent = data.message || "Техника успешно добавлена";
+                document.getElementById("addTechResponseText").className = "";
+                document.getElementById("addTechResponse").style.display = "block";
+                document.getElementById("addTechStateNumber").value = "";
+            })
+            .catch(error => {
+                showError("addTechResponseText", error.message);
+                document.getElementById("addTechResponse").style.display = "block";
             });
     }
 
     function getTechniques() {
         const branchId = document.getElementById("techBranchId").value;
 
+        if (!branchId) {
+            showErrorInList("Пожалуйста, введите ID филиала");
+            return;
+        }
+
         fetch(`/branches/${branchId}/techniques`)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.message || 'Ошибка сервера'); });
+                }
+                return response.json();
+            })
             .then(data => {
                 const techniquesList = document.getElementById("techniquesList");
                 techniquesList.innerHTML = "";
 
-                if (data.length === 0) {
-                    techniquesList.innerHTML = "<p>В этом филиале нет техники</p>";
-                } else {
-                    data.forEach(tech => {
-                        const techItem = document.createElement("div");
-                        techItem.className = "technique-item";
-                        techItem.innerHTML = `
-                            <p><strong>Госномер:</strong> ${tech.stateNumber}</p>
-                            <p><strong>Тип:</strong> ${tech.typeTechnique}</p>
-                            <p><strong>Год выпуска:</strong> ${tech.yearOfProduction}</p>
-                            <p><strong>Грузоподъемность:</strong> ${tech.loadCapacity}</p>
+                if (Array.isArray(data)) {
+                    if (data.length === 0) {
+                        techniquesList.innerHTML = "<p>В этом филиале нет техники</p>";
+                    } else {
+                        data.forEach(tech => {
+                            const techItem = document.createElement("div");
+                            techItem.className = "technique-item";
+                            techItem.innerHTML = `
+                            <p><strong>Госномер:</strong> ${tech.stateNumber || 'не указан'}</p>
+                            <p><strong>Тип:</strong> ${tech.typeTechnique || 'не указан'}</p>
+                            <p><strong>Год выпуска:</strong> ${tech.yearOfProduction || 'не указан'}</p>
+                            <p><strong>Грузоподъемность:</strong> ${tech.loadCapacity || 'не указана'}</p>
                         `;
-                        techniquesList.appendChild(techItem);
-                    });
+                            techniquesList.appendChild(techItem);
+                        });
+                    }
+                } else if (data.message) {
+                    techniquesList.innerHTML = `<p>${data.message}</p>`;
+                } else {
+                    techniquesList.innerHTML = "<p>Получены данные в неожиданном формате</p>";
+                    console.log("Неожиданный формат данных:", data);
                 }
 
                 document.getElementById("techniquesResponse").style.display = "block";
             })
-            .catch((error) => {
-                console.error('Error:', error);
-                document.getElementById("techniquesResponse").querySelector("h3").textContent = "Ошибка: " + error.message;
-                document.getElementById("techniquesResponse").style.display = "block";
+            .catch(error => {
+                showErrorInList(error.message);
             });
+    }
+
+    function showError(elementId, message) {
+        const element = document.getElementById(elementId);
+        element.textContent = message;
+        element.className = "error-message";
+    }
+
+    function showErrorInList(message) {
+        const techniquesList = document.getElementById("techniquesList");
+        techniquesList.innerHTML = `<p class="error-message">${message}</p>`;
+        document.getElementById("techniquesResponse").style.display = "block";
     }
 </script>
 </body>

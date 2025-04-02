@@ -1,7 +1,5 @@
 package com.example.rentalmaster.model.db.entity;
 
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
@@ -13,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 /*Филиал, в каждом городе свой отдельный филиал*/
+/*http://localhost:8080/branches.html*/
 
 @Getter
 @Setter
@@ -37,6 +36,9 @@ public class Branches {
 
     @Column(name = "phone")
     private String phone;
+
+    @Column(name = "коэфициент наценки")
+    private double coefficient;
 
     @OneToOne
     private Employees employees;

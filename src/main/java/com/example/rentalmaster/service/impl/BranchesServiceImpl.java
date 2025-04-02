@@ -52,6 +52,7 @@ public class BranchesServiceImpl implements BranchesService {
         branches.setAddress(branchesRequest.getAddress());
         branches.setEmail(branchesRequest.getEmail());
         branches.setEmployees(branchesRequest.getEmployees());
+        branches.setCoefficient(branchesRequest.getCoefficient());
         branchesRepository.save(branches);
 
         BranchesResponse branchesResponse = objectMapper.convertValue(branches, BranchesResponse.class);
