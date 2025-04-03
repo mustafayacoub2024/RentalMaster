@@ -1,5 +1,6 @@
 package com.example.rentalmaster.service.impl;
 
+import com.example.rentalmaster.exception.CommonBackendException;
 import com.example.rentalmaster.model.db.entity.Clients;
 import com.example.rentalmaster.model.db.entity.Drivers;
 import com.example.rentalmaster.model.db.entity.Employees;
@@ -11,6 +12,7 @@ import com.example.rentalmaster.service.EmployeesService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -22,10 +24,10 @@ public class EmployeesServiceImpl implements EmployeesService {
     private final ObjectMapper objectMapper;
 
     @Override
-    public EmployeesResponse addClient(EmployeesRequest employeesRequest) {
+    public EmployeesResponse addEmployee(EmployeesRequest employeesRequest) {
         employeesRepository.findByPersonalNumber(employeesRequest.getPersonalNumber()).ifPresent(employees -> {
-            throw new RuntimeException("Сотрудник с табельным номером "
-                    + employeesRequest.getPersonalNumber() + " уже существует");
+            throw new CommonBackendException("Сотрудник с табельным номером "
+                    + employeesRequest.getPersonalNumber() + " уже существует", HttpStatus.CONFLICT);
         });
 
        Employees employees = objectMapper.convertValue(employeesRequest, Employees.class);
@@ -37,10 +39,10 @@ public class EmployeesServiceImpl implements EmployeesService {
     }
 
     @Override
-    public EmployeesResponse updateClient(String personalNumber, EmployeesRequest employeesRequest) {
+    public EmployeesResponse updateEmployee(String personalNumber, EmployeesRequest employeesRequest) {
         Employees employees = employeesRepository.findByPersonalNumber(employeesRequest.getPersonalNumber())
-                .orElseThrow(() -> new RuntimeException("Сотрудник с табельным номером "
-                        + employeesRequest.getPersonalNumber() + " не найден"));
+                .orElseThrow(() -> new CommonBackendException("Сотрудник с табельным номером "
+                        + employeesRequest.getPersonalNumber() + " не найден", HttpStatus.NOT_FOUND));
 
         employees.setPersonalNumber(employeesRequest.getPersonalNumber());
         employees.setLastName(employeesRequest.getLastName());
@@ -56,15 +58,34 @@ public class EmployeesServiceImpl implements EmployeesService {
     }
 
     @Override
-    public EmployeesResponse deleteClient(String personalNumber) {
+    public EmployeesResponse deleteEmployee(String personalNumber) {
         Employees employees = employeesRepository.findByPersonalNumber(personalNumber)
-                .orElseThrow(() -> new RuntimeException("Сотрудник с табельным номером "
-                        + personalNumber + " не найден"));
+                .orElseThrow(() -> new CommonBackendException("Сотрудник с табельным номером "
+                        + personalNumber + " не найден", HttpStatus.NOT_FOUND));
 
         employeesRepository.delete(employees);
 
         EmployeesResponse response = objectMapper.convertValue(employees, EmployeesResponse.class);
         response.setMessage("Сотрудник с табельным номером " + personalNumber + " успешно удалён");
+        return response;
+    }
+
+    @Override
+    public EmployeesResponse getEmployeeByPersonalNumber(String personalNumber) {
+        Employees employees = employeesRepository.findByPersonalNumber(personalNumber)
+                .orElseThrow(() -> new CommonBackendException("Сотрудник с табельным номером "
+                        + personalNumber + " не найден", HttpStatus.NOT_FOUND));
+
+        EmployeesResponse response = EmployeesResponse.builder()
+                .personalNumber(employees.getPersonalNumber())
+                .firstName(employees.getFirstName())
+                .lastName(employees.getLastName())
+                .email(employees.getEmail())
+                .phone(employees.getPhone())
+                .role(employees.getRole())
+                .message("Данные сотрудника успешно получены")
+                .build();
+
         return response;
     }
 }

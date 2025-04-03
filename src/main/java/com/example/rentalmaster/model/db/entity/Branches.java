@@ -21,8 +21,8 @@ import java.util.UUID;
 public class Branches {
 
     @Id
-    @Column(name = "branchId")
-    private UUID branchId;
+    @Column(name = "branchName")
+    private String branchName;
 
     @Column(name = "city")
     private String city;

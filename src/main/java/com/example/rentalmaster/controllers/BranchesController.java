@@ -2,6 +2,7 @@ package com.example.rentalmaster.controllers;
 
 import com.example.rentalmaster.model.db.entity.Branches;
 import com.example.rentalmaster.model.dto.request.BranchesRequest;
+import com.example.rentalmaster.model.dto.request.BranchesRequestUpdate;
 import com.example.rentalmaster.model.dto.request.ClientsRequest;
 import com.example.rentalmaster.model.dto.response.BranchesResponse;
 import com.example.rentalmaster.model.dto.response.ClientsResponse;
@@ -43,60 +44,55 @@ public class BranchesController {
         }
     }
 
-    @PutMapping("/{branchId}")
+    @PutMapping("/{branchName}")
     @Operation(summary = "Изменить данные филиала")
-    public BranchesResponse updateClient(@PathVariable @Valid UUID branchId, @RequestBody @Valid  BranchesRequest branchesRequest) {
-        try {
-            return branchesService.updateBranches(branchId, branchesRequest);
-        } catch (RuntimeException e) {
-            BranchesResponse branchesResponse = new BranchesResponse();
-            branchesResponse.setMessage(e.getMessage());
-            return branchesResponse;
-        }
+    public ResponseEntity<BranchesResponse> updateClient(@PathVariable @Valid String branchName,
+                                                         @RequestBody @Valid BranchesRequestUpdate branchesRequest) {
+        BranchesResponse branchesResponse = branchesService.updateBranches(branchName, branchesRequest);
+
+        return ResponseEntity.ok(branchesResponse);
     }
 
-    @DeleteMapping("/{branchId}")
+    @DeleteMapping("/{branchName}")
     @Operation(summary = "Удалить филиал")
-    public BranchesResponse deleteClient(@PathVariable("branchId") UUID branchId) {
-        try {
-            return branchesService.deleteClient(branchId);
-        } catch (RuntimeException e) {
-            BranchesResponse branchesResponse = new BranchesResponse();
-            branchesResponse.setMessage(e.getMessage());
-            return branchesResponse;
-        }
+    public ResponseEntity<BranchesResponse> deleteClient(@PathVariable("branchName") String branchName) {
+        BranchesResponse response = branchesService.deleteBranch(branchName);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping
     @Operation(summary = "Получить список всех филиалов")
-    public List<BranchesResponse> getAllBranches() {
-        try {
-            return branchesService.getAllBranches();
-        } catch (RuntimeException e) {
-            BranchesResponse branchesResponse = new BranchesResponse();
-            branchesResponse.setMessage(e.getMessage());
-            return (List<BranchesResponse>) branchesResponse;
-        }
+    public ResponseEntity<List<BranchesResponse>> getAllBranches() {
+        List<BranchesResponse> branchesResponse = branchesService.getAllBranches();
+        return ResponseEntity.ok(branchesResponse);
+
     }
 
-    @GetMapping("/{branchId}/techniques")
+    @GetMapping("/{branchName}/techniques")
     @Operation(summary = "Получить список технике на филиале")
-    public ResponseEntity<List<TechniqueResponse>> getTechniquesByBranch(@PathVariable UUID branchId) {
-        List<TechniqueResponse> techniques = branchesService.getTechniquesByBranchId(branchId);
+    public ResponseEntity<List<TechniqueResponse>> getTechniquesByBranch(@PathVariable String branchName) {
+        List<TechniqueResponse> techniques = branchesService.getTechniquesByBranchName(branchName);
         return ResponseEntity.ok(techniques);
     }
 
-    @PostMapping("/{branchId}/techniques/{techniqueStateNumber}")
+    @PostMapping("/{branchName}/techniques/{techniqueStateNumber}")
     @Operation(summary = "Добавить технику в филиал")
-    public BranchesResponse addTechniqueToBranch(
-            @PathVariable UUID branchId,
+    public ResponseEntity<BranchesResponse> addTechniqueToBranch(
+            @PathVariable String branchName,
             @PathVariable String techniqueStateNumber) {
-        try {
-            return branchesService.addTechniqueToBranch(branchId, techniqueStateNumber);
-        } catch (RuntimeException e) {
-            BranchesResponse response = new BranchesResponse();
-            response.setMessage(e.getMessage());
-            return response;
-        }
+
+        BranchesResponse branchesResponse = branchesService.addTechniqueToBranch(branchName, techniqueStateNumber);
+        return ResponseEntity.ok(branchesResponse);
+    }
+
+    @DeleteMapping("/{branchName}/techniques/{techniqueStateNumber}")
+    @Operation(summary = "Удалить технику из филиала")
+    public ResponseEntity<BranchesResponse> deleteTechniqueToBranch(
+            @PathVariable String branchName,
+            @PathVariable String techniqueStateNumber) {
+
+        BranchesResponse branchesResponse = branchesService.deleteTechniqueToBranch(branchName, techniqueStateNumber);
+        return ResponseEntity.ok(branchesResponse);
+
     }
 }

@@ -24,30 +24,11 @@ public class RentalOrder {
     @Column(name = "rental_order")
     UUID rentalOrderId;
 
-    @ManyToOne
-    @JsonBackReference(value = "client_order")
-    @JoinColumn(name = "clientsId")
-    private Clients clients;
-
-    @ManyToOne
-    @JsonBackReference(value = "branch_order")
-    @JoinColumn(name = "branchId")
-    private Branches branch;
-
-    @ManyToOne
-    @JsonBackReference(value = "technique_order")
-    @JoinColumn(name = "techniquesId")
-    private Technique techniques;
-
     @Column(name = "rentalCost")
     private Double rentalCost;
 
     @Column(name = "status")
     private Status status;
-
-    @ManyToOne
-    @JsonBackReference(value = "client_order")
-    private Employees employees;
 
     @Column(name = "createdAt")
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -55,6 +36,41 @@ public class RentalOrder {
     @Column(name = "updatedAt")
     private LocalDateTime updatedAt = LocalDateTime.now();
 
-    @Column(name = "addrres")
-    private String addrres;
+    @Column(name = "address")
+    private String address;
+
+    @Column(name = "rental_days")
+    private Integer rentalDays;
+
+    @Column(name = "start_date")
+    private LocalDateTime startDate;
+
+    @Column(name = "end_date")
+    private LocalDateTime endDate;
+
+    @Column(name = "total_cost")
+    private Double totalCost;
+
+    @ManyToOne
+    @JsonBackReference(value = "client_order")
+    private Employees employees;
+
+    @ManyToOne
+    @JoinColumn(name = "driversId")
+    private Drivers drivers;
+
+    @ManyToOne
+    @JsonBackReference(value = "technique_order")
+    @JoinColumn(name = "techniquesId")
+    private Technique techniques;
+
+    @ManyToOne
+    @JsonBackReference(value = "client_order")
+    @JoinColumn(name = "clientsId")
+    private Clients clients;
+
+    @ManyToOne
+    @JsonBackReference(value = "branch_order")
+    @JoinColumn(name = "branchName")
+    private Branches branch;
 }

@@ -24,6 +24,10 @@ import java.util.UUID;
 @Entity(name = "clients")
 public class Clients {
 
+    @Id
+    @Column(name = "inn")
+    private String inn;
+
     @Column(name = "nameOfOrganization") //название организаций
     private String nameOfOrganization;
 
@@ -32,10 +36,6 @@ public class Clients {
 
     @Column(name = "actualAddress") //Фактический адрес
     private String actualAddress;
-
-    @Id
-    @Column(name = "inn")
-    private String inn;
 
     @Column(name="kpp")
     private String kpp;

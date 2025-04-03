@@ -2,6 +2,7 @@ package com.example.rentalmaster.model.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,5 +37,9 @@ public class DriversRequest {
     @NotEmpty
     @Schema(description = "Номер телфона")
     private String phone;
+
+    @NotNull
+    @Schema(description = "Зарплата водителя за 1 час работы")
+    private Double salary;
 
 }

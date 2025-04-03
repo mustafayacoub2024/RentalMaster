@@ -36,4 +36,7 @@ public class Drivers {
 
     @Column(name = "phone")
     private String phone;
+
+    @Column(name= "salary")
+    private Double salary;
 }
