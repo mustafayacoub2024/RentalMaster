@@ -15,12 +15,12 @@ import java.util.UUID;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BranchesResponse {
+public class RentalOrderResponse {
 
     @Schema(description = "Сообщение о результате операции")
     private String message;
 
-    @Schema(description = "branchName")
-    private String branchName;
+    @Schema(description = "rental_order")
+    private UUID rentalOrderId;
 
 }

@@ -8,6 +8,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface BranchesRepository extends JpaRepository<Branches, UUID> {
-    Optional<Branches> findByBranchId(UUID branchId);
+public interface BranchesRepository extends JpaRepository<Branches, String> {
+    Optional<Branches> findByBranchName(String branchName);
 }
