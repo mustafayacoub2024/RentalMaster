@@ -4,6 +4,8 @@ import com.example.rentalmaster.exception.CommonBackendException;
 import com.example.rentalmaster.model.db.entity.Technique;
 import com.example.rentalmaster.model.db.repository.TechniqueRepository;
 import com.example.rentalmaster.model.dto.request.TechniqueRequest;
+import com.example.rentalmaster.model.dto.request.TechniqueUpdateRequest;
+import com.example.rentalmaster.model.dto.response.TechniqueInfoResponse;
 import com.example.rentalmaster.model.dto.response.TechniqueResponse;
 import com.example.rentalmaster.service.TechniqueService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -40,10 +44,10 @@ public class TechniqueServiceImpl implements TechniqueService {
 
 
     @Override
-    public TechniqueResponse updateTechnique(String stateNumber, TechniqueRequest techniqueRequest) {
-        Technique technique = techniqueRepository.findByStateNumber(techniqueRequest.getStateNumber()).
-                orElseThrow(() -> new RuntimeException("Техника с госномером " +
-                        techniqueRequest.getStateNumber() + " не найден"));
+    public TechniqueResponse updateTechnique(String stateNumber, TechniqueUpdateRequest techniqueRequest) {
+        Technique technique = techniqueRepository.findByStateNumber(stateNumber).
+                orElseThrow(() -> new CommonBackendException("Техника с госномером " +
+                        stateNumber + " не найден", HttpStatus.NOT_FOUND));
 
         technique.setTypeTechnique(techniqueRequest.getTypeTechnique());
         technique.setColor(techniqueRequest.getColor());
@@ -62,8 +66,8 @@ public class TechniqueServiceImpl implements TechniqueService {
     @Override
     public TechniqueResponse deleteTechnique(String stateNumber) {
         Technique technique = techniqueRepository.findByStateNumber(stateNumber).
-                orElseThrow(() -> new RuntimeException("Техника с госномером " +
-                        stateNumber + " не найден"));
+                orElseThrow(() -> new CommonBackendException("Техника с госномером " +
+                        stateNumber + " не найден", HttpStatus.NOT_FOUND));
 
         techniqueRepository.delete(technique);
 
@@ -71,5 +75,39 @@ public class TechniqueServiceImpl implements TechniqueService {
         techniqueResponse.setMessage("Техника с госномером " + stateNumber + " успешно удаленно");
 
         return techniqueResponse;
+    }
+
+    @Override
+    public TechniqueInfoResponse getTechnique(String stateNumber) {
+        Technique technique = techniqueRepository.findByStateNumber(stateNumber).
+                orElseThrow(() -> new CommonBackendException("Техника с госномером " +
+                        stateNumber + " не найден", HttpStatus.NOT_FOUND));
+
+       return TechniqueInfoResponse.builder()
+                .message("Данные об технике с госномер "+ stateNumber)
+                .typeTechnique(technique.getTypeTechnique())
+                .color(technique.getColor())
+                .weight(technique.getWeight())
+                .loadCapacity(technique.getLoadCapacity())
+                .yearOfProduction(technique.getYearOfProduction())
+                .baseCost(technique.getBaseCost())
+                .stateNumber(technique.getStateNumber())
+               .availability(technique.getAvailability())
+                .build();
+    }
+
+    @Override
+    public List<TechniqueResponse> getAllTechnique() {
+        List<Technique> techniqueList = techniqueRepository.findAll();
+
+        if (techniqueList.isEmpty()) {
+            throw new CommonBackendException("Список технике пуст", HttpStatus.NOT_FOUND);
+        }
+        return techniqueList.stream()
+                .map(technique -> {
+                    TechniqueResponse techniqueResponse = objectMapper.convertValue(technique, TechniqueResponse.class);
+                    techniqueResponse.setMessage(technique.getTypeTechnique()+ " ,госномер" + technique.getStateNumber());
+                    return techniqueResponse;
+                }).toList();
     }
 }

@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/employees")
 @RequiredArgsConstructor
@@ -56,5 +58,12 @@ public class EmployeesController {
         return ResponseEntity.ok(employeesResponse);
     }
 
+    @GetMapping()
+    @Operation(summary = "Список всех сотрудников")
+    public ResponseEntity<List<EmployeesResponse>> getAllEmployees() {
+      List<EmployeesResponse> employeesResponse = employeesService.getAllEmployees();
+        return ResponseEntity.ok(employeesResponse);
+
+    }
 
 }

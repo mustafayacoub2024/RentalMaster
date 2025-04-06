@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -30,8 +32,8 @@ public class EmployeesServiceImpl implements EmployeesService {
                     + employeesRequest.getPersonalNumber() + " уже существует", HttpStatus.CONFLICT);
         });
 
-       Employees employees = objectMapper.convertValue(employeesRequest, Employees.class);
-       Employees employeesSave= employeesRepository.save(employees);
+        Employees employees = objectMapper.convertValue(employeesRequest, Employees.class);
+        Employees employeesSave = employeesRepository.save(employees);
 
         EmployeesResponse response = objectMapper.convertValue(employeesSave, EmployeesResponse.class);
         response.setMessage("Сотрудник с табельным номером " + employeesSave.getPersonalNumber() + " успешно создан");
@@ -87,5 +89,21 @@ public class EmployeesServiceImpl implements EmployeesService {
                 .build();
 
         return response;
+    }
+
+    @Override
+    public List<EmployeesResponse> getAllEmployees() {
+        List<Employees> employees = employeesRepository.findAll();
+
+        if (employees.isEmpty()) {
+            throw new CommonBackendException("Список сотрудников пуст", HttpStatus.NOT_FOUND);
+        }
+        return employees.stream()
+                .map(employee -> {
+                    EmployeesResponse response = objectMapper.convertValue(employee, EmployeesResponse.class);
+                    response.setMessage("Сотрудник " + employee.getLastName() + " " + employee.getFirstName() +
+                            " ,табельный номер" + employee.getPersonalNumber());
+                    return response;
+                }).toList();
     }
 }

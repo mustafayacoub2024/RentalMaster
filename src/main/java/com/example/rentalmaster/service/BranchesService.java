@@ -3,6 +3,7 @@ package com.example.rentalmaster.service;
 import com.example.rentalmaster.model.dto.request.BranchesRequest;
 import com.example.rentalmaster.model.dto.request.BranchesRequestUpdate;
 import com.example.rentalmaster.model.dto.response.BranchesResponse;
+import com.example.rentalmaster.model.dto.response.TechniqueInfoResponse;
 import com.example.rentalmaster.model.dto.response.TechniqueResponse;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public interface BranchesService  {
 
     List<BranchesResponse> getAllBranches();
 
-    List<TechniqueResponse> getTechniquesByBranchName(String branchName);
+    List<TechniqueInfoResponse> getTechniquesByBranchName(String branchName);
 
     BranchesResponse addTechniqueToBranch(String branchName, String techniqueStateNumber);
 
