@@ -8,6 +8,7 @@ import com.example.rentalmaster.model.db.repository.TechniqueRepository;
 import com.example.rentalmaster.model.dto.request.BranchesRequest;
 import com.example.rentalmaster.model.dto.request.BranchesRequestUpdate;
 import com.example.rentalmaster.model.dto.response.BranchesResponse;
+import com.example.rentalmaster.model.dto.response.TechniqueInfoResponse;
 import com.example.rentalmaster.model.dto.response.TechniqueResponse;
 import com.example.rentalmaster.service.BranchesService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -101,13 +102,13 @@ public class BranchesServiceImpl implements BranchesService {
     }
 
     @Override
-    public List<TechniqueResponse> getTechniquesByBranchName(String branchName) {
+    public List<TechniqueInfoResponse> getTechniquesByBranchName(String branchName) {
         Branches branch = branchesRepository.findByBranchName(branchName)
                 .orElseThrow(() -> new CommonBackendException("Филиал " + branchName + " не найден"
                         , HttpStatus.NOT_FOUND));
 
         return branch.getTechniques().stream()
-                .map(technique -> TechniqueResponse.builder()
+                .map(technique -> TechniqueInfoResponse.builder()
                         .message("Техника найдена в филиале " + branch.getCity())
                         .stateNumber(technique.getStateNumber())
                         .yearOfProduction(technique.getYearOfProduction())

@@ -6,6 +6,7 @@ import com.example.rentalmaster.model.dto.request.BranchesRequestUpdate;
 import com.example.rentalmaster.model.dto.request.ClientsRequest;
 import com.example.rentalmaster.model.dto.response.BranchesResponse;
 import com.example.rentalmaster.model.dto.response.ClientsResponse;
+import com.example.rentalmaster.model.dto.response.TechniqueInfoResponse;
 import com.example.rentalmaster.model.dto.response.TechniqueResponse;
 import com.example.rentalmaster.service.BranchesService;
 import com.example.rentalmaster.service.ClientsService;
@@ -66,8 +67,8 @@ public class BranchesController {
 
     @GetMapping("/{branchName}/techniques")
     @Operation(summary = "Получить список технике на филиале")
-    public ResponseEntity<List<TechniqueResponse>> getTechniquesByBranch(@PathVariable String branchName) {
-        List<TechniqueResponse> techniques = branchesService.getTechniquesByBranchName(branchName);
+    public ResponseEntity<List<TechniqueInfoResponse>> getTechniquesByBranch(@PathVariable String branchName) {
+        List<TechniqueInfoResponse> techniques = branchesService.getTechniquesByBranchName(branchName);
         return ResponseEntity.ok(techniques);
     }
 

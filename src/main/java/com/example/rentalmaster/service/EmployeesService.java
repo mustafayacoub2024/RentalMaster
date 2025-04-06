@@ -3,6 +3,8 @@ package com.example.rentalmaster.service;
 import com.example.rentalmaster.model.dto.request.EmployeesRequest;
 import com.example.rentalmaster.model.dto.response.EmployeesResponse;
 
+import java.util.List;
+
 public interface EmployeesService {
     EmployeesResponse addEmployee(EmployeesRequest employeesResponse);
 
@@ -11,4 +13,6 @@ public interface EmployeesService {
     EmployeesResponse deleteEmployee(String personalNumber);
 
     EmployeesResponse getEmployeeByPersonalNumber(String personalNumber);
+
+    List<EmployeesResponse> getAllEmployees();
 }
