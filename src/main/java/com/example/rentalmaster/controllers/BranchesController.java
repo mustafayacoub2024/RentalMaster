@@ -34,14 +34,10 @@ public class BranchesController {
 
     @PostMapping
     @Operation(summary = "Создать филиал")
-    public BranchesResponse addBranches(@RequestBody @Valid BranchesRequest branchesRequest) {
-        try {
-            return branchesService.addBranches(branchesRequest);
-        } catch (RuntimeException e) {
-            BranchesResponse branchesResponse = new BranchesResponse();
-            branchesResponse.setMessage(e.getMessage());
-            return branchesResponse;
-        }
+    public ResponseEntity<BranchesResponse> addBranches(@RequestBody @Valid BranchesRequest branchesRequest) {
+        BranchesResponse branchesResponse = branchesService.addBranches(branchesRequest);
+        return ResponseEntity.ok(branchesResponse);
+
     }
 
     @PutMapping("/{branchName}")
