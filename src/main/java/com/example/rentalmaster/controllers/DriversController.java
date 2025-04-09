@@ -23,11 +23,17 @@ public class DriversController {
 
     @PostMapping
     @Operation(summary = "Создать водителя")
-    public ResponseEntity<DriverResponse> addDriver(@RequestBody @Valid DriversRequest driversRequest) {
-        DriverResponse driverResponse = driversService.addDriver(driversRequest);
-        return ResponseEntity.ok(driverResponse);
+    public DriverResponse addDriver(@RequestBody @Valid DriversRequest driversRequest) {
+        return driversService.addDriver(driversRequest);
 
     }
+//    } @PostMapping
+//    @Operation(summary = "Создать водителя")
+//    public ResponseEntity<DriverResponse> addDriver(@RequestBody @Valid DriversRequest driversRequest) {
+//        DriverResponse driverResponse = driversService.addDriver(driversRequest);
+//        return ResponseEntity.ok(driverResponse);
+//
+//    }
 
     @DeleteMapping("/{personal_number}")
     @Operation(summary = "Удалить водителя")

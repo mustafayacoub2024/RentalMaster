@@ -39,4 +39,6 @@ public class Drivers {
 
     @Column(name= "salary")
     private Double salary;
+
+
 }

@@ -90,7 +90,7 @@ public class DriversServiceImpl implements DriversService {
 
     @Override
     public List<DriverResponse> getAllDrivers() {
-        List<Drivers> drivers = driversRepository.findAll();
+        List<Drivers> drivers = getAll();
 
         if (drivers.isEmpty()) {
             throw new CommonBackendException("Список водителлей пуст", HttpStatus.NOT_FOUND);
@@ -101,5 +101,10 @@ public class DriversServiceImpl implements DriversService {
                     response.setMessage("Водителть "+driver.getLastName()+" "+driver.getFirstName()+" ,табельный номер " + driver.getPersonalNumber());
                     return response;
                 }).toList();
+    }
+
+    @Override
+    public List<Drivers> getAll() {
+        return driversRepository.findAll();
     }
 }
