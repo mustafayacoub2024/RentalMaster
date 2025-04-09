@@ -5,10 +5,15 @@ import com.example.rentalmaster.model.enums.Status;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
+
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.UUID;
 
 /*Заявка на аренду строительной техники*/
@@ -17,11 +22,14 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity(name = "rentalOrder")
 public class RentalOrder {
 
     @Id
-    @Column(name = "rental_order")
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "rental_order_id", updatable = false, nullable = false)
     UUID rentalOrderId;
 
     @Column(name = "rentalCost")
@@ -39,8 +47,13 @@ public class RentalOrder {
     @Column(name = "address")
     private String address;
 
-    @Column(name = "rental_days")
-    private Integer rentalDays;
+    @Transient
+    public Integer getRentalDays() {
+        return (int) ChronoUnit.DAYS.between(
+                startDate.toLocalDate(),
+                endDate.toLocalDate()
+        );
+    }
 
     @Column(name = "start_date")
     private LocalDateTime startDate;
@@ -55,14 +68,14 @@ public class RentalOrder {
     @JsonBackReference(value = "client_order")
     private Employees employees;
 
-    @ManyToOne
+    @OneToMany
     @JoinColumn(name = "driversId")
-    private Drivers drivers;
+    private List<Drivers> drivers;
 
-    @ManyToOne
+    @OneToMany
     @JsonBackReference(value = "technique_order")
     @JoinColumn(name = "techniquesId")
-    private Technique techniques;
+    private List<Technique> techniques;
 
     @ManyToOne
     @JsonBackReference(value = "client_order")
@@ -70,7 +83,7 @@ public class RentalOrder {
     private Clients clients;
 
     @ManyToOne
-    @JsonBackReference(value = "branch_order")
     @JoinColumn(name = "branchName")
     private Branches branch;
+
 }

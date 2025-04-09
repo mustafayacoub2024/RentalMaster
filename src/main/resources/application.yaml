@@ -17,3 +17,20 @@ spring:
         jdbc:
           lob:
             non_contextual_creation: true
+
+  mail:
+    host: smtp.yandex.ru
+    port: 465
+    username: mustafa.yacoub2013@yandex.ru
+    password: fnazwcvpuwubazqi
+    protocol: smtp
+    properties:
+      mail.smtp:
+        auth: true
+        ssl.enable: false
+        starttls.enable: true
+        connectiontimeout: 5000
+        timeout: 5000
+        writetimeout: 5000
+        socketFactory.class: javax.net.ssl.SSLSocketFactory
+

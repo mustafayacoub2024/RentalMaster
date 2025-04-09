@@ -2,6 +2,7 @@ package com.example.rentalmaster.model.db.entity;
 /*Информация об юр лицах, которые арендуют технику */
 /* html страница: http://localhost:8080/clients.html */
 
+import com.example.rentalmaster.model.enums.Status;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -69,5 +70,10 @@ public class Clients {
 
     @Column(name = "phone")
     private String phone;
+
+    @Column(name = "status")
+    private Status status;
+
+
 
 }
