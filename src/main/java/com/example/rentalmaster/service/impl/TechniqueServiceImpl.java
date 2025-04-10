@@ -110,4 +110,9 @@ public class TechniqueServiceImpl implements TechniqueService {
                     return techniqueResponse;
                 }).toList();
     }
+
+    @Override
+    public List<Technique> getAll() {
+        return techniqueRepository.findAll();
+    }
 }

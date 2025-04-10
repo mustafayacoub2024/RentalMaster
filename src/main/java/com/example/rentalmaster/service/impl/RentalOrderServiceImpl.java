@@ -1,8 +1,10 @@
 package com.example.rentalmaster.service.impl;
 
 import com.example.rentalmaster.exception.CommonBackendException;
+import com.example.rentalmaster.model.db.entity.Branches;
 import com.example.rentalmaster.model.db.entity.Clients;
 import com.example.rentalmaster.model.db.entity.Drivers;
+import com.example.rentalmaster.model.db.entity.Employees;
 import com.example.rentalmaster.model.db.entity.RentalOrder;
 import com.example.rentalmaster.model.db.entity.Technique;
 import com.example.rentalmaster.model.db.repository.ClientsRepository;
@@ -18,8 +20,12 @@ import com.example.rentalmaster.model.dto.response.RentalShortResponse.EmployeeS
 import com.example.rentalmaster.model.dto.response.RentalShortResponse.TechniqueShortResponse;
 import com.example.rentalmaster.model.enums.Availability;
 import com.example.rentalmaster.model.enums.Status;
+import com.example.rentalmaster.service.BranchesService;
+import com.example.rentalmaster.service.ClientsService;
 import com.example.rentalmaster.service.DriversService;
+import com.example.rentalmaster.service.EmployeesService;
 import com.example.rentalmaster.service.RentalOrderService;
+import com.example.rentalmaster.service.TechniqueService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +33,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -43,6 +51,10 @@ public class RentalOrderServiceImpl implements RentalOrderService {
     private final ObjectMapper objectMapper;
     private final EmailService emailService;
     private final DriversService driversService;
+    private final BranchesService branchesService;
+    private final EmployeesService employeesService;
+    private final TechniqueService techniqueService;
+    private final ClientsService clientsService;
 
 
     @Override
@@ -65,25 +77,33 @@ public class RentalOrderServiceImpl implements RentalOrderService {
                     );
                 });
 
-
-
         Double calculatedTotalCost = calculateTotalCost(rentalOrderRequest);
         Double calculateRentalCost = calculateRentalCost(rentalOrderRequest);
+
+        List<Drivers> drivers = driversService.getAll();
+        String branchName = rentalOrderRequest.getBranch().getBranchName();
+        Branches branches = branchesService.getBranchByBranchName(branchName);
+        String employeePersonalNumber = rentalOrderRequest.getEmployees().getPersonalNumber();
+        Employees employees = employeesService.getEmployee(employeePersonalNumber);
+        List<Technique> techniques = techniqueService.getAll();
+        String inn = rentalOrderRequest.getClients().getInn();
+        Clients client = clientsService.getClient(inn);
+
 
         RentalOrder rentalOrder = RentalOrder.builder()
                 .rentalCost(calculateRentalCost)
                 .address(rentalOrderRequest.getAddress())
                 .createdAt(rentalOrderRequest.getCreatedAt())
-                .branch(rentalOrderRequest.getBranch())
+                .branch(branches)
                 .endDate(rentalOrderRequest.getEndDate())
-                .drivers(driversService.getAll())
-                .techniques(rentalOrderRequest.getTechniques())
-                .employees(rentalOrderRequest.getEmployees())
+                .drivers(drivers)
+                .techniques(techniques)
+                .employees(employees)
                 .status(Status.Новая)
                 .startDate(rentalOrderRequest.getStartDate())
                 .totalCost(calculatedTotalCost)
                 .updatedAt(rentalOrderRequest.getUpdatedAt())
-                .clients(rentalOrderRequest.getClients())
+                .clients(client)
                 .build();
 
         RentalOrder savedRentalOrder = rentalOrderRepository.save(rentalOrder);
@@ -113,19 +133,22 @@ public class RentalOrderServiceImpl implements RentalOrderService {
         }
 
         if (savedRentalOrder.getDrivers() != null) {
-            rentalOrderResponse.setDrivers((List<DriverShortResponse>) savedRentalOrder.getDrivers().stream()
-                    .map(driver -> DriverShortResponse.builder()
+            List<DriverShortResponse> driverResponses = new ArrayList<>();
+            savedRentalOrder.getDrivers().forEach(driver ->
+                    driverResponses.add(DriverShortResponse.builder()
                             .personalNumber(driver.getPersonalNumber())
                             .build())
-                    .toList());
+            );
+            rentalOrderResponse.setDrivers(driverResponses);
         }
 
         if (savedRentalOrder.getTechniques() != null) {
-            rentalOrderResponse.setTechniques((List<TechniqueShortResponse>) savedRentalOrder.getTechniques().stream()
-                    .map(tech -> TechniqueShortResponse.builder()
-                            .stateNumber(tech.getStateNumber())
-                            .build())
-                    .toList());
+            rentalOrderResponse.setTechniques(
+                    savedRentalOrder.getTechniques().stream()
+                            .map(tech -> TechniqueShortResponse.builder()
+                                    .stateNumber(tech.getStateNumber())
+                                    .build())
+                            .collect(Collectors.toList()));
         }
 
         if (savedRentalOrder.getClients() != null) {

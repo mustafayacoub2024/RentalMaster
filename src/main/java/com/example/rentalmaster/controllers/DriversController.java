@@ -7,12 +7,16 @@ import com.example.rentalmaster.service.DriversService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-
 
 @RestController
 @RequestMapping("/drivers")
@@ -27,44 +31,33 @@ public class DriversController {
         return driversService.addDriver(driversRequest);
 
     }
-//    } @PostMapping
-//    @Operation(summary = "Создать водителя")
-//    public ResponseEntity<DriverResponse> addDriver(@RequestBody @Valid DriversRequest driversRequest) {
-//        DriverResponse driverResponse = driversService.addDriver(driversRequest);
-//        return ResponseEntity.ok(driverResponse);
-//
-//    }
 
     @DeleteMapping("/{personal_number}")
     @Operation(summary = "Удалить водителя")
-    public ResponseEntity<DriverResponse> deleteDriver(@PathVariable("personal_number") String personalNumber) {
-        DriverResponse driverResponse = driversService.deleteDriver(personalNumber);
-        return ResponseEntity.ok(driverResponse);
+    public DriverResponse deleteDriver(@PathVariable("personal_number") String personalNumber) {
+        return driversService.deleteDriver(personalNumber);
 
     }
 
     @PutMapping("/{personal_number}")
     @Operation(summary = "Изменить данные водителя")
-    public ResponseEntity<DriverResponse> updateDriver(@PathVariable("personal_number") String personalNumber,
-                                                       @RequestBody DriversRequest driversRequest) {
-        DriverResponse driverResponse = driversService.updateDriver(personalNumber, driversRequest);
-        return ResponseEntity.ok(driverResponse);
+    public DriverResponse updateDriver(@PathVariable("personal_number") String personalNumber,
+                                       @RequestBody DriversRequest driversRequest) {
+        return driversService.updateDriver(personalNumber, driversRequest);
 
     }
 
     @GetMapping("/{personal_number}")
     @Operation(summary = "Данные о водителе")
-    public ResponseEntity<DriverInfoResponse> getDriver(@PathVariable("personal_number") String personalNumber) {
-        DriverInfoResponse driverResponse = driversService.getInfoDriver(personalNumber);
-        return ResponseEntity.ok(driverResponse);
+    public DriverInfoResponse getDriver(@PathVariable("personal_number") String personalNumber) {
+        return driversService.getInfoDriver(personalNumber);
 
     }
 
     @GetMapping()
     @Operation(summary = "Список всех водителей")
-        public ResponseEntity<List<DriverResponse>> getAllDrivers() {
-       List<DriverResponse>  driverResponse = driversService.getAllDrivers();
-        return ResponseEntity.ok(driverResponse);
-    }
+    public List<DriverResponse> getAllDrivers() {
+        return driversService.getAllDrivers();
 
+    }
 }

@@ -5,7 +5,6 @@ import com.example.rentalmaster.model.dto.response.RentalOrderResponse;
 import com.example.rentalmaster.service.RentalOrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,14 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class RentalOrderController {
 
     private final RentalOrderService rentalOrderService;
-
-//    @PostMapping()
-//    @Operation(summary = "Создание заявки")
-//    private ResponseEntity<RentalOrderResponse> addRentalOrder(@RequestBody RentalOrderRequest rentalOrderRequest) {
-//        RentalOrderResponse rentalOrderResponse = rentalOrderService.addRentalOrder(rentalOrderRequest);
-//        return ResponseEntity.ok(rentalOrderResponse);
-//    }
-
 
     @PostMapping()
     @Operation(summary = "Создание заявки")

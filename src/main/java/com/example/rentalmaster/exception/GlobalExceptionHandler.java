@@ -1,6 +1,5 @@
 package com.example.rentalmaster.exception;
 
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -43,6 +41,7 @@ public class GlobalExceptionHandler {
                         .timestamp(LocalDateTime.now())
                         .message(ex.getMessage())
                         .build());
+
     }
 
 
@@ -57,6 +56,7 @@ public class GlobalExceptionHandler {
                         .message(String.format("Отсутствует обязательный параметр: %s", parameter))
                         .path(request.getDescription(false).replace("uri=", ""))
                         .build());
+
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
@@ -73,6 +73,7 @@ public class GlobalExceptionHandler {
                         .message(String.format("Неверный тип данных для параметра: %s", parameter))
                         .path(request.getDescription(false).replace("uri=", ""))
                         .build());
+
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -81,6 +82,6 @@ public class GlobalExceptionHandler {
         String message = fieldError != null ? fieldError.getField() + " " + fieldError.getDefaultMessage() : ex.getMessage();
         log.error(message);
         return ResponseEntity.badRequest().body(new ErrorMessage());
-    }
 
+    }
 }

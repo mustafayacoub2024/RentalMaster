@@ -1,6 +1,4 @@
 package com.example.rentalmaster.model.db.entity;
-/*Информация об юр лицах, которые арендуют технику */
-/* html страница: http://localhost:8080/clients.html */
 
 import com.example.rentalmaster.model.enums.Status;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -9,14 +7,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.List;
-import java.util.UUID;
-
 
 /*Юридическое лицо, фирма */
-
+/* html страница: http://localhost:8080/clients.html */
 
 @Getter
 @Setter
@@ -71,8 +68,15 @@ public class Clients {
     @Column(name = "phone")
     private String phone;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private Status status;
+
+    @JsonManagedReference(value = "client_order")
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<RentalOrder> orders;
+
 
 
 

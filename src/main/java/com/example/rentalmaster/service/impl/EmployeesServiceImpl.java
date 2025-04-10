@@ -106,4 +106,10 @@ public class EmployeesServiceImpl implements EmployeesService {
                     return response;
                 }).toList();
     }
+
+    @Override
+    public Employees getEmployee(String employeePersonalNumber) {
+        return employeesRepository.findByPersonalNumber(employeePersonalNumber)
+                .orElseThrow(() -> new CommonBackendException("Сотрудник не найден", HttpStatus.NOT_FOUND));
+    }
 }
