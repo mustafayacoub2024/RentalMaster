@@ -1,5 +1,6 @@
 package com.example.rentalmaster.service;
 
+import com.example.rentalmaster.model.db.entity.Employees;
 import com.example.rentalmaster.model.dto.request.EmployeesRequest;
 import com.example.rentalmaster.model.dto.response.EmployeesResponse;
 
@@ -15,4 +16,6 @@ public interface EmployeesService {
     EmployeesResponse getEmployeeByPersonalNumber(String personalNumber);
 
     List<EmployeesResponse> getAllEmployees();
+
+    Employees getEmployee(String employeePersonalNumber);
 }

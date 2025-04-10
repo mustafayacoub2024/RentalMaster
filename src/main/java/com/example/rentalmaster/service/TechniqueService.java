@@ -1,5 +1,6 @@
 package com.example.rentalmaster.service;
 
+import com.example.rentalmaster.model.db.entity.Technique;
 import com.example.rentalmaster.model.dto.request.TechniqueRequest;
 import com.example.rentalmaster.model.dto.request.TechniqueUpdateRequest;
 import com.example.rentalmaster.model.dto.response.TechniqueInfoResponse;
@@ -17,4 +18,6 @@ public interface TechniqueService {
     TechniqueInfoResponse getTechnique(String stateNumber);
 
     List<TechniqueResponse> getAllTechnique();
+
+    List<Technique> getAll();
 }

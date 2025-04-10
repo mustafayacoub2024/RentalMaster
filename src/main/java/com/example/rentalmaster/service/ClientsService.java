@@ -1,5 +1,6 @@
 package com.example.rentalmaster.service;
 
+import com.example.rentalmaster.model.db.entity.Clients;
 import com.example.rentalmaster.model.dto.request.ClientsRequest;
 import com.example.rentalmaster.model.dto.request.ClientsUpdateRequest;
 import com.example.rentalmaster.model.dto.response.ClientsInfoResponse;
@@ -17,4 +18,6 @@ public interface ClientsService {
     List<ClientsResponse> getAllClients();
 
     ClientsInfoResponse getInofClient(String inn);
+
+    Clients getClient(String inn);
 }

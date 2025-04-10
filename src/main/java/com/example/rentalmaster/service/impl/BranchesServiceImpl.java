@@ -9,7 +9,6 @@ import com.example.rentalmaster.model.dto.request.BranchesRequest;
 import com.example.rentalmaster.model.dto.request.BranchesRequestUpdate;
 import com.example.rentalmaster.model.dto.response.BranchesResponse;
 import com.example.rentalmaster.model.dto.response.TechniqueInfoResponse;
-import com.example.rentalmaster.model.dto.response.TechniqueResponse;
 import com.example.rentalmaster.service.BranchesService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -160,4 +159,15 @@ public class BranchesServiceImpl implements BranchesService {
             return branchesResponse;
 
         }
+
+    @Override
+    public List<Branches> getAll() {
+        return branchesRepository.findAll();
     }
+
+    @Override
+    public Branches getBranchByBranchName(String branchName) {
+        return branchesRepository.findByBranchName(branchName)
+                .orElseThrow(()-> new CommonBackendException("Филиал не найден", HttpStatus.NOT_FOUND));
+    }
+}

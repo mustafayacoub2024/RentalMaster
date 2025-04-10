@@ -123,4 +123,11 @@ public class ClientsServiceImpl implements ClientsService {
                 .okved(clients.getOkved())
                 .build();
     }
+
+    @Override
+    public Clients getClient(String inn) {
+        return clientsRepository.findByInn(inn).orElseThrow(()-> new CommonBackendException("Клиент не найден",
+                HttpStatus.NOT_FOUND));
+
+    }
 }
