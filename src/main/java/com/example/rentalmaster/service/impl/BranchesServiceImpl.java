@@ -2,12 +2,15 @@ package com.example.rentalmaster.service.impl;
 
 import com.example.rentalmaster.exception.CommonBackendException;
 import com.example.rentalmaster.model.db.entity.Branches;
+import com.example.rentalmaster.model.db.entity.Drivers;
 import com.example.rentalmaster.model.db.entity.Technique;
 import com.example.rentalmaster.model.db.repository.BranchesRepository;
+import com.example.rentalmaster.model.db.repository.DriversRepository;
 import com.example.rentalmaster.model.db.repository.TechniqueRepository;
 import com.example.rentalmaster.model.dto.request.BranchesRequest;
 import com.example.rentalmaster.model.dto.request.BranchesRequestUpdate;
 import com.example.rentalmaster.model.dto.response.BranchesResponse;
+import com.example.rentalmaster.model.dto.response.DriverInfoResponse;
 import com.example.rentalmaster.model.dto.response.TechniqueInfoResponse;
 import com.example.rentalmaster.service.BranchesService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,6 +34,8 @@ public class BranchesServiceImpl implements BranchesService {
     private final ObjectMapper objectMapper;
 
     private final TechniqueRepository techniqueRepository;
+
+    private final DriversRepository driversRepository;
 
     @Override
     public BranchesResponse addBranches(BranchesRequest branchesRequest) {
@@ -151,14 +156,14 @@ public class BranchesServiceImpl implements BranchesService {
         if (!branches.getTechniques().contains(technique)) {
             throw new CommonBackendException("Техника не принадлежит указанному филиалу", HttpStatus.BAD_REQUEST);
         }
-            branches.getTechniques().remove(technique);
-            branchesRepository.save(branches);
+        branches.getTechniques().remove(technique);
+        branchesRepository.save(branches);
 
-            BranchesResponse branchesResponse = objectMapper.convertValue(branches, BranchesResponse.class);
-            branchesResponse.setMessage("Техника c госномером " + techniqueStateNumber + " успешно удалена из филиала" + branchName);
-            return branchesResponse;
+        BranchesResponse branchesResponse = objectMapper.convertValue(branches, BranchesResponse.class);
+        branchesResponse.setMessage("Техника c госномером " + techniqueStateNumber + " успешно удалена из филиала" + branchName);
+        return branchesResponse;
 
-        }
+    }
 
     @Override
     public List<Branches> getAll() {
@@ -168,6 +173,61 @@ public class BranchesServiceImpl implements BranchesService {
     @Override
     public Branches getBranchByBranchName(String branchName) {
         return branchesRepository.findByBranchName(branchName)
-                .orElseThrow(()-> new CommonBackendException("Филиал не найден", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new CommonBackendException("Филиал не найден", HttpStatus.NOT_FOUND));
+    }
+
+    @Override
+    public List<DriverInfoResponse> getDriversByBranchName(String branchName) {
+        Branches branch = branchesRepository.findByBranchName(branchName)
+                .orElseThrow(() -> new CommonBackendException("Филиал " + branchName + " не найден"
+                        , HttpStatus.NOT_FOUND));
+
+        return branch.getDrivers().stream()
+                .map(drivers ->
+                    DriverInfoResponse.builder()
+                            .message("Водитель найден в филиале " + branch.getBranchName())
+                            .personalNumber(drivers.getPersonalNumber())
+                            .lastName(drivers.getLastName())
+                            .firstName(drivers.getFirstName())
+                            .phone(drivers.getPhone())
+                            .email(drivers.getEmail())
+                            .salary(drivers.getSalary())
+                            .build())
+                    .collect(Collectors.toList());
+         }
+
+    @Override
+    public BranchesResponse addDriverToBranch(String branchName, String personalNumber) {
+        Branches branches = branchesRepository.findByBranchName(branchName)
+                .orElseThrow(() -> new CommonBackendException("Филиал "
+                        + branchName + " не найден", HttpStatus.NOT_FOUND));
+
+        Drivers driver = driversRepository.findByPersonalNumber(personalNumber)
+                .orElseThrow(() -> new CommonBackendException(
+                        "Водитель с табельным номером "+ personalNumber+ " не найден", HttpStatus.NOT_FOUND));
+
+        branches.getDrivers().add(driver);
+        branchesRepository.save(branches);
+
+        BranchesResponse branchesResponse = objectMapper.convertValue(branches, BranchesResponse.class);
+        branchesResponse.setMessage("Водитель с табельным номером "+ personalNumber+ " успешно добавлен в филиал" + branchName);
+        return branchesResponse;
+    }
+
+    @Override
+    public BranchesResponse deleteDriverToBranch(String branchName, String personalNumber) {
+        Branches branches = branchesRepository.findByBranchName(branchName)
+                .orElseThrow(() -> new CommonBackendException("Филиал "
+                        + branchName + " не найден", HttpStatus.NOT_FOUND));
+        Drivers driver = driversRepository.findByPersonalNumber(personalNumber)
+                .orElseThrow(() -> new CommonBackendException(
+                        "Водитель с табельным номером "+personalNumber+" не найден", HttpStatus.NOT_FOUND));
+
+        branches.getDrivers().remove(driver);
+        branchesRepository.save(branches);
+
+        BranchesResponse branchesResponse = objectMapper.convertValue(branches, BranchesResponse.class);
+        branchesResponse.setMessage("Водитель с табельным номером " + personalNumber + " успешно удален из филиала " + branchName);
+        return branchesResponse;
     }
 }

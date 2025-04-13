@@ -59,23 +59,6 @@ public class RentalOrderServiceImpl implements RentalOrderService {
 
     @Override
     public RentalOrderResponse addRentalOrder(RentalOrderRequest rentalOrderRequest) {
-        Clients clients = rentalOrderRequest.getClients();
-
-        clientsRepository.findByInnAndStatus(clients.getInn(), Status.Новая)
-                .ifPresent(rentalOrders -> {
-                    throw new CommonBackendException("Заявка для компании " + clients.getNameOfOrganization()
-                            + " (ИНН: " + clients.getInn() + ") уже создано",
-                            HttpStatus.CONFLICT
-                    );
-                });
-
-        clientsRepository.findByInnAndStatus(clients.getInn(), Status.Обработывется)
-                .ifPresent(rentalOrders -> {
-                    throw new CommonBackendException("Заявка для компании " + clients.getNameOfOrganization()
-                            + " (ИНН: " + clients.getInn() + ") уже находится в обработке",
-                            HttpStatus.CONFLICT
-                    );
-                });
 
         Double calculatedTotalCost = calculateTotalCost(rentalOrderRequest);
         Double calculateRentalCost = calculateRentalCost(rentalOrderRequest);
