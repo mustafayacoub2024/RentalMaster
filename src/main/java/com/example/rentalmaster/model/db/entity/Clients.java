@@ -68,10 +68,4 @@ public class Clients {
     @Column(name = "phone")
     private String phone;
 
-    @JsonManagedReference(value = "client_order")
-    @OneToMany(mappedBy = "clients", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private List<RentalOrder> orders;
-
-
 }

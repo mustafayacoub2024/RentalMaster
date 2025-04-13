@@ -32,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,28 +61,47 @@ public class RentalOrderServiceImpl implements RentalOrderService {
     @Override
     public RentalOrderResponse addRentalOrder(RentalOrderRequest rentalOrderRequest) {
 
-        Double calculatedTotalCost = calculateTotalCost(rentalOrderRequest);
-        Double calculateRentalCost = calculateRentalCost(rentalOrderRequest);
+        checkTechniqueAvailability(rentalOrderRequest);
 
-        List<Drivers> drivers = driversService.getAll();
-        String branchName = rentalOrderRequest.getBranch().getBranchName();
-        Branches branches = branchesService.getBranchByBranchName(branchName);
-        String employeePersonalNumber = rentalOrderRequest.getEmployees().getPersonalNumber();
-        Employees employees = employeesService.getEmployee(employeePersonalNumber);
-        List<Technique> techniques = techniqueService.getAll();
+        List<String> driverIds = rentalOrderRequest.getDrivers().stream()
+                .map(Drivers::getPersonalNumber)
+                .toList();
+        List<Drivers> drivers = driversRepository.findAllByPersonalNumberIn(driverIds);
+
+        List<String> techniqueIds = rentalOrderRequest.getTechniques().stream()
+                .map(Technique::getStateNumber)
+                .toList();
+        List<Technique> techniques = techniqueRepository.findAllById(techniqueIds);
+
+        String personalNumber = rentalOrderRequest.getEmployees().getPersonalNumber();
+        Employees employee = employeesService.getEmployee(personalNumber);
+
         String inn = rentalOrderRequest.getClients().getInn();
         Clients client = clientsService.getClient(inn);
 
+        String branchName = rentalOrderRequest.getBranch().getBranchName();
+        Branches branch = branchesService.getBranchByBranchName(branchName);
+
+        techniques.forEach(tech -> {
+            if (tech.getAvailability() != Availability.AVAILABLE) {
+                throw new CommonBackendException(
+                        "Техника " + tech.getStateNumber() + " недоступна",
+                        HttpStatus.CONFLICT);
+            }
+        });
+
+        Double calculatedTotalCost = calculateTotalCost(rentalOrderRequest);
+        Double calculateRentalCost = calculateRentalCost(rentalOrderRequest);
 
         RentalOrder rentalOrder = RentalOrder.builder()
                 .rentalCost(calculateRentalCost)
                 .address(rentalOrderRequest.getAddress())
                 .createdAt(rentalOrderRequest.getCreatedAt())
-                .branch(branches)
+                .branch(branch)
                 .endDate(rentalOrderRequest.getEndDate())
                 .drivers(drivers)
                 .techniques(techniques)
-                .employees(employees)
+                .employees(employee)
                 .status(Status.NEW)
                 .startDate(rentalOrderRequest.getStartDate())
                 .totalCost(calculatedTotalCost)
@@ -89,7 +109,8 @@ public class RentalOrderServiceImpl implements RentalOrderService {
                 .clients(client)
                 .build();
 
-        RentalOrder savedRentalOrder = rentalOrderRepository.save(rentalOrder);
+        RentalOrder order = objectMapper.convertValue(rentalOrder, RentalOrder.class);
+        RentalOrder savedRentalOrder = rentalOrderRepository.save(order);
 
 //        sendNotificationEmails(savedRentalOrder); временно отключил рассылку
 
@@ -109,29 +130,20 @@ public class RentalOrderServiceImpl implements RentalOrderService {
         rentalOrderResponse.setTotalCost(savedRentalOrder.getTotalCost());
 
 
-        if (savedRentalOrder.getEmployees() != null) {
-            rentalOrderResponse.setEmployees(EmployeeShortResponse.builder()
-                    .personalNumber(savedRentalOrder.getEmployees().getPersonalNumber())
-                    .build());
-        }
-
         if (savedRentalOrder.getDrivers() != null) {
-            List<DriverShortResponse> driverResponses = new ArrayList<>();
-            savedRentalOrder.getDrivers().forEach(driver ->
-                    driverResponses.add(DriverShortResponse.builder()
-                            .personalNumber(driver.getPersonalNumber())
+            rentalOrderResponse.setDrivers(savedRentalOrder.getDrivers().stream()
+                    .map(d -> DriverShortResponse.builder()
+                            .personalNumber(d.getPersonalNumber())
                             .build())
-            );
-            rentalOrderResponse.setDrivers(driverResponses);
+                    .collect(Collectors.toList()));
         }
 
         if (savedRentalOrder.getTechniques() != null) {
-            rentalOrderResponse.setTechniques(
-                    savedRentalOrder.getTechniques().stream()
-                            .map(tech -> TechniqueShortResponse.builder()
-                                    .stateNumber(tech.getStateNumber())
-                                    .build())
-                            .collect(Collectors.toList()));
+            rentalOrderResponse.setTechniques(savedRentalOrder.getTechniques().stream()
+                    .map(t -> TechniqueShortResponse.builder()
+                            .stateNumber(t.getStateNumber())
+                            .build())
+                    .collect(Collectors.toList()));
         }
 
         if (savedRentalOrder.getClients() != null) {
@@ -140,7 +152,107 @@ public class RentalOrderServiceImpl implements RentalOrderService {
                     .build());
         }
 
+        if (savedRentalOrder.getEmployees() != null) {
+            rentalOrderResponse.setEmployees(EmployeeShortResponse.builder()
+                    .personalNumber(savedRentalOrder.getEmployees().getPersonalNumber())
+                    .build());
+        }
         return rentalOrderResponse;
+    }
+
+    @Override
+    public RentalOrderResponse updateStatusByInProgress(String rentalOrderId) {
+        RentalOrder rentalOrder = rentalOrderRepository.findByRentalOrderId(rentalOrderId)
+                .orElseThrow(() -> new CommonBackendException(
+                        "Заявка " + rentalOrderId + " не найдена",
+                        HttpStatus.NOT_FOUND
+                ));
+
+        if (rentalOrder.getStatus() == Status.IN_PROGRESS) {
+            throw new CommonBackendException(
+                    "Заявка уже находится в статусе 'В работе'",
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        rentalOrder.getTechniques().forEach(technique -> {
+            technique.setAvailability(Availability.BUSY);
+            techniqueRepository.save(technique);
+        });
+
+        if (rentalOrder.getStatus() == Status.NEW) {
+            rentalOrder.setStatus(Status.IN_PROGRESS);
+            rentalOrderRepository.save(rentalOrder);
+        }
+
+        RentalOrderResponse response = objectMapper.convertValue(rentalOrder, RentalOrderResponse.class);
+        response.setRentalDays((int) ChronoUnit.DAYS.between(
+                rentalOrder.getStartDate().toLocalDate(),
+                rentalOrder.getEndDate().toLocalDate()
+        ));
+        response.setMessage("Статус заявки " + rentalOrderId + " успешно изменён на статус 'в работе'");
+        return response;
+    }
+
+
+    @Override
+    public RentalOrderResponse updateStatusByCombleted(String rentalOrderId) {
+        RentalOrder rentalOrder = rentalOrderRepository.findByRentalOrderId(rentalOrderId)
+                .orElseThrow(() -> new CommonBackendException(
+                        "Заявка " + rentalOrderId + " не найдена",
+                        HttpStatus.NOT_FOUND
+                ));
+
+        if (rentalOrder.getStatus() == Status.COMPLETED) {
+            throw new CommonBackendException(
+                    "Заявка уже находится в статусе 'Завершено'",
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        rentalOrder.getTechniques().forEach(technique -> {
+            technique.setAvailability(Availability.AVAILABLE);
+            techniqueRepository.save(technique);
+        });
+
+        if (rentalOrder.getStatus() == Status.IN_PROGRESS) {
+            rentalOrder.setStatus(Status.COMPLETED);
+            rentalOrderRepository.save(rentalOrder);
+        }
+
+        rentalOrder.setActualEndDate(LocalDateTime.now());
+        List<Technique> techniques = techniqueRepository.findAllById(
+                rentalOrder.getTechniques().stream()
+                        .map(Technique::getStateNumber)
+                        .toList()
+        );
+
+        List<Drivers> drivers = driversRepository.findAllByPersonalNumberIn(
+                rentalOrder.getDrivers().stream()
+                        .map(Drivers::getPersonalNumber)
+                        .toList()
+        );
+
+
+        double actualDailyCost = techniques.stream().mapToDouble(Technique::getBaseCost).sum()
+                + drivers.stream().mapToDouble(d -> d.getSalary() * 2).sum();
+
+        int actualDays = (int) ChronoUnit.DAYS.between(
+                rentalOrder.getStartDate().toLocalDate(),
+                rentalOrder.getActualEndDate().toLocalDate()
+        );
+
+        Double newTotalCost = actualDailyCost * actualDays;
+        rentalOrder.setTotalCost(newTotalCost);
+        rentalOrder.setStatus(Status.COMPLETED);
+        rentalOrder.setActualEndDate(LocalDateTime.now());
+
+        RentalOrder updatedOrder = rentalOrderRepository.save(rentalOrder);
+
+        RentalOrderResponse response = objectMapper.convertValue(updatedOrder, RentalOrderResponse.class);
+        response.setRentalDays(actualDays);
+        response.setMessage("Статус заявки " + rentalOrderId + " успешно изменён на статус 'Завершено'");
+        return response;
     }
 
 
@@ -175,7 +287,7 @@ public class RentalOrderServiceImpl implements RentalOrderService {
     }
 
     private Double calculateRentalCost(RentalOrderRequest request) {
-
+        checkTechniqueAvailability(request);
         List<String> techniqueIds = request.getTechniques().stream()
                 .map(Technique::getStateNumber)
                 .toList();
@@ -270,5 +382,30 @@ public class RentalOrderServiceImpl implements RentalOrderService {
             log.error("Ошибка при отправке уведомлений о заявке: {}", e.getMessage());
 
         }
+    }
+
+    private void checkTechniqueAvailability(RentalOrderRequest request) {
+        List<String> techniqueNumbers = request.getTechniques().stream()
+                .map(Technique::getStateNumber)
+                .toList();
+
+        List<Technique> techniques = techniqueRepository.findAllById(techniqueNumbers);
+
+        techniques.forEach(tech -> {
+            boolean isBusy = rentalOrderRepository.existsByTechniquesAndDateRange(
+                    tech.getStateNumber(),
+                    request.getStartDate(),
+                    request.getEndDate()
+            );
+
+            if (isBusy) {
+                throw new CommonBackendException(
+                        "Техника " + tech.getStateNumber() +
+                                " занята в указанный период",
+                        HttpStatus.CONFLICT
+                );
+            }
+        });
+
     }
 }

@@ -17,5 +17,5 @@ public interface EmployeesService {
 
     List<EmployeesResponse> getAllEmployees();
 
-    Employees getEmployee(String employeePersonalNumber);
+    Employees getEmployee(String personalNumber);
 }

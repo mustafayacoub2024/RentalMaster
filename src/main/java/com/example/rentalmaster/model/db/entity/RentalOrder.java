@@ -1,5 +1,5 @@
 package com.example.rentalmaster.model.db.entity;
-/*создание нового заказа, изменение существующего заказа, расчет стоимости аренды*/
+
 
 import com.example.rentalmaster.model.enums.Status;
 import com.example.rentalmaster.utils.StatusConverter;
@@ -15,9 +15,9 @@ import org.hibernate.annotations.GenericGenerator;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.UUID;
 
 /*Заявка на аренду строительной техники*/
+
 
 @Getter
 @Setter
@@ -44,21 +44,15 @@ public class RentalOrder {
     private Status status;
 
     @Column(name = "createdAt")
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(name = "updatedAt")
+    @Builder.Default
     private LocalDateTime updatedAt = LocalDateTime.now();
 
     @Column(name = "address")
     private String address;
-
-    @Transient
-    public Integer getRentalDays() {
-        return (int) ChronoUnit.DAYS.between(
-                startDate.toLocalDate(),
-                endDate.toLocalDate()
-        );
-    }
 
     @Column(name = "start_date")
     private LocalDateTime startDate;
@@ -69,8 +63,11 @@ public class RentalOrder {
     @Column(name = "total_cost")
     private Double totalCost;
 
+    @Column(name = "actual_end_date")
+    private LocalDateTime actualEndDate;
+
     @ManyToOne
-    @JsonBackReference(value = "employees_order")
+    @JoinColumn(name = "personalNumber")
     private Employees employees;
 
     @OneToMany
@@ -82,8 +79,7 @@ public class RentalOrder {
     private List<Technique> techniques;
 
     @ManyToOne
-    @JsonBackReference(value = "client_order")
-    @JoinColumn(name = "clientsId")
+    @JoinColumn(name = "inn")
     private Clients clients;
 
     @ManyToOne

@@ -108,8 +108,8 @@ public class EmployeesServiceImpl implements EmployeesService {
     }
 
     @Override
-    public Employees getEmployee(String employeePersonalNumber) {
-        return employeesRepository.findByPersonalNumber(employeePersonalNumber)
+    public Employees getEmployee(String personalNumber) {
+        return employeesRepository.findByPersonalNumber(personalNumber)
                 .orElseThrow(() -> new CommonBackendException("Сотрудник не найден", HttpStatus.NOT_FOUND));
     }
 }
