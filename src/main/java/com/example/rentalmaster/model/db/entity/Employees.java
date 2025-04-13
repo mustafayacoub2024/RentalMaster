@@ -1,7 +1,10 @@
 package com.example.rentalmaster.model.db.entity;
 
 import com.example.rentalmaster.model.enums.Roles;
+import com.example.rentalmaster.utils.RoleConverter;
+import com.example.rentalmaster.utils.TypeTechniqueConverter;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
@@ -39,6 +42,7 @@ public class Employees {
     private String phone;
 
     @Column(name = "role")
+    @Convert(converter = RoleConverter.class)
     private Roles role;
 
 }

@@ -2,6 +2,8 @@ package com.example.rentalmaster.model.db.entity;
 
 import com.example.rentalmaster.model.enums.Availability;
 import com.example.rentalmaster.model.enums.TypeTechnique;
+import com.example.rentalmaster.utils.AvailabilityConverter;
+import com.example.rentalmaster.utils.TypeTechniqueConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,9 +40,11 @@ public class Technique {
     private Double baseCost; //Базовая стоимость аренды за 1 час в руб
 
     @Column(name = "typeTechnique")
+    @Convert(converter = TypeTechniqueConverter.class)
     private TypeTechnique typeTechnique;
 
     @Column(name = "Статус")
+    @Convert(converter = AvailabilityConverter.class)
     private Availability availability;
 
 

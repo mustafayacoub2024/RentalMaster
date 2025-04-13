@@ -2,6 +2,7 @@ package com.example.rentalmaster.model.db.entity;
 /*создание нового заказа, изменение существующего заказа, расчет стоимости аренды*/
 
 import com.example.rentalmaster.model.enums.Status;
+import com.example.rentalmaster.utils.StatusConverter;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -27,15 +28,19 @@ import java.util.UUID;
 public class RentalOrder {
 
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "rental_order_id", updatable = false, nullable = false)
-    UUID rentalOrderId;
+    @GeneratedValue(generator = "alphanumeric_id")
+    @GenericGenerator(
+            name = "alphanumeric_id",
+            strategy = "com.example.rentalmaster.utils.AlphaNumericIdGenerator"
+    )
+    @Column(name = "rental_order_id", updatable = false, nullable = false, unique = true, length = 9)
+    String rentalOrderId;
 
     @Column(name = "rentalCost")
     private Double rentalCost;
 
     @Column(name = "status")
+    @Convert(converter = StatusConverter.class)
     private Status status;
 
     @Column(name = "createdAt")

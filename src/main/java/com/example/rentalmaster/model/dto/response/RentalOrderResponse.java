@@ -36,7 +36,7 @@ public class RentalOrderResponse {
     private String message;
 
     @Schema(description = "rental_order")
-    private UUID rentalOrderId;
+    private String rentalOrderId;
 
     @Schema(description = "Количество арендных дней",
             example = "5",
