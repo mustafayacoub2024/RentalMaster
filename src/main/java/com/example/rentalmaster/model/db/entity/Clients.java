@@ -35,13 +35,13 @@ public class Clients {
     @Column(name = "actualAddress") //Фактический адрес
     private String actualAddress;
 
-    @Column(name="kpp")
+    @Column(name = "kpp")
     private String kpp;
 
-    @Column(name="bik")
+    @Column(name = "bik")
     private String bik;
 
-    @Column(name="currentAccount") // p/c
+    @Column(name = "currentAccount") // p/c
     private String currentAccount;
 
     @Column(name = "correspondentAccount") // к/с
@@ -62,22 +62,16 @@ public class Clients {
     @Column(name = "generalManager")
     private String generalManager;
 
-    @Column(name="email")
+    @Column(name = "email")
     private String email;
 
     @Column(name = "phone")
     private String phone;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private Status status;
-
     @JsonManagedReference(value = "client_order")
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "clients", cascade = CascadeType.ALL, orphanRemoval = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<RentalOrder> orders;
-
-
 
 
 }

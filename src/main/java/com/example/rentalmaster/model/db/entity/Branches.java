@@ -49,4 +49,6 @@ public class Branches {
     @OneToMany
     private List<Technique> techniques;
 
+    @OneToMany
+    private List<Drivers> drivers;
 }

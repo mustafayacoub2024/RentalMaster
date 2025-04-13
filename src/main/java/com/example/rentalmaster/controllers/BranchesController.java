@@ -3,6 +3,7 @@ package com.example.rentalmaster.controllers;
 import com.example.rentalmaster.model.dto.request.BranchesRequest;
 import com.example.rentalmaster.model.dto.request.BranchesRequestUpdate;
 import com.example.rentalmaster.model.dto.response.BranchesResponse;
+import com.example.rentalmaster.model.dto.response.DriverInfoResponse;
 import com.example.rentalmaster.model.dto.response.TechniqueInfoResponse;
 import com.example.rentalmaster.service.BranchesService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -80,5 +81,31 @@ public class BranchesController {
 
         return branchesService.deleteTechniqueToBranch(branchName, techniqueStateNumber);
 
+    }
+
+    @GetMapping("/{branchName}/drivers")
+    @Operation(summary = "Получить список технике на филиале")
+    public List<DriverInfoResponse> getDriversByBranch(@PathVariable String branchName) {
+        return branchesService.getDriversByBranchName(branchName);
+
+    }
+
+    @PostMapping("/{branchName}/drivers/{personalNumber}")
+    @Operation(summary = "Добавить технику в филиал")
+    public BranchesResponse addDriverToBranch(
+            @PathVariable String branchName,
+            @PathVariable String personalNumber) {
+
+        return branchesService.addDriverToBranch(branchName, personalNumber);
+
+    }
+
+    @DeleteMapping("/{branchName}/drivers/{personalNumber}")
+    @Operation(summary = "Удалить водителя из филиала")
+    public BranchesResponse deleteDriverToBranch(
+            @PathVariable String branchName,
+            @PathVariable String personalNumber) {
+
+        return branchesService.deleteDriverToBranch(branchName, personalNumber);
     }
 }

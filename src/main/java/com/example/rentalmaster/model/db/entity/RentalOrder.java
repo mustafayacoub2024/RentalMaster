@@ -65,16 +65,15 @@ public class RentalOrder {
     private Double totalCost;
 
     @ManyToOne
-    @JsonBackReference(value = "client_order")
+    @JsonBackReference(value = "employees_order")
     private Employees employees;
 
     @OneToMany
-    @JoinColumn(name = "driversId")
+    @JoinColumn(name = "order_id")
     private List<Drivers> drivers;
 
     @OneToMany
-    @JsonBackReference(value = "technique_order")
-    @JoinColumn(name = "techniquesId")
+    @JoinColumn(name = "order_id")
     private List<Technique> techniques;
 
     @ManyToOne
