@@ -7,6 +7,7 @@ import com.example.rentalmaster.model.dto.request.TechniqueRequest;
 import com.example.rentalmaster.model.dto.request.TechniqueUpdateRequest;
 import com.example.rentalmaster.model.dto.response.TechniqueInfoResponse;
 import com.example.rentalmaster.model.dto.response.TechniqueResponse;
+import com.example.rentalmaster.model.enums.Availability;
 import com.example.rentalmaster.service.TechniqueService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,9 @@ public class TechniqueServiceImpl implements TechniqueService {
                     );
                 });
 
+
         Technique technique = objectMapper.convertValue(techniqueRequest, Technique.class);
+        technique.setAvailability(Availability.AVAILABLE);
         techniqueRepository.save(technique);
 
         return TechniqueResponse.builder()

@@ -82,7 +82,7 @@ public class RentalOrderServiceImpl implements RentalOrderService {
                 .drivers(drivers)
                 .techniques(techniques)
                 .employees(employees)
-                .status(Status.Новая)
+                .status(Status.NEW)
                 .startDate(rentalOrderRequest.getStartDate())
                 .totalCost(calculatedTotalCost)
                 .updatedAt(rentalOrderRequest.getUpdatedAt())
@@ -91,10 +91,10 @@ public class RentalOrderServiceImpl implements RentalOrderService {
 
         RentalOrder savedRentalOrder = rentalOrderRepository.save(rentalOrder);
 
-        sendNotificationEmails(savedRentalOrder);
+//        sendNotificationEmails(savedRentalOrder); временно отключил рассылку
 
         RentalOrderResponse rentalOrderResponse = new RentalOrderResponse();
-        rentalOrderResponse.setMessage("Заявка номер" + savedRentalOrder.getRentalOrderId() + " успешно создана");
+        rentalOrderResponse.setMessage("Заявка номер " + savedRentalOrder.getRentalOrderId() + " успешно создана");
         rentalOrderResponse.setRentalOrderId(savedRentalOrder.getRentalOrderId());
         rentalOrderResponse.setRentalDays((int) ChronoUnit.DAYS.between(
                 savedRentalOrder.getStartDate().toLocalDate(),
@@ -190,8 +190,8 @@ public class RentalOrderServiceImpl implements RentalOrderService {
                 HttpStatus.NOT_FOUND);
 
         for (Technique technique : dbTechnique) {
-            if ((technique.getAvailability() == Availability.Занято ||
-                    technique.getAvailability() == Availability.ТО)) {
+            if ((technique.getAvailability() == Availability.BUSY ||
+                    technique.getAvailability() == Availability.MAINTENANCE)) {
                 throw new CommonBackendException("Техника с госномером " + technique.getStateNumber() + " недоступно",
                         HttpStatus.CONFLICT);
             }

@@ -50,7 +50,4 @@ public class TechniqueRequest {
     @Schema(description = "Тип технике")
     private TypeTechnique typeTechnique;
 
-    @NotNull
-    @Schema(description = "Стутус")
-    private Availability availability;
 }
