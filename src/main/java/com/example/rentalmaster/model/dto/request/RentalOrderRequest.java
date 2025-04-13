@@ -5,15 +5,11 @@ import com.example.rentalmaster.model.db.entity.Clients;
 import com.example.rentalmaster.model.db.entity.Drivers;
 import com.example.rentalmaster.model.db.entity.Employees;
 import com.example.rentalmaster.model.db.entity.Technique;
-import com.example.rentalmaster.model.enums.Status;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,7 +18,6 @@ import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -34,10 +29,12 @@ public class RentalOrderRequest {
 
     @NotNull
     @Schema(description = "Дата создание заявки")
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @NotNull
     @Schema(description = "Дата обновление заявки")
+    @Builder.Default
     private LocalDateTime updatedAt = LocalDateTime.now();
 
     @NotEmpty

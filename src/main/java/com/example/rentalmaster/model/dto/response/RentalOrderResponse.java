@@ -1,29 +1,20 @@
 package com.example.rentalmaster.model.dto.response;
 
-import com.example.rentalmaster.model.db.entity.Branches;
-import com.example.rentalmaster.model.db.entity.Clients;
-import com.example.rentalmaster.model.db.entity.Drivers;
-import com.example.rentalmaster.model.db.entity.Employees;
-import com.example.rentalmaster.model.db.entity.Technique;
 import com.example.rentalmaster.model.dto.response.RentalShortResponse.ClientShortResponse;
 import com.example.rentalmaster.model.dto.response.RentalShortResponse.DriverShortResponse;
 import com.example.rentalmaster.model.dto.response.RentalShortResponse.EmployeeShortResponse;
 import com.example.rentalmaster.model.dto.response.RentalShortResponse.TechniqueShortResponse;
 import com.example.rentalmaster.model.enums.Status;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.FieldNameConstants;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
-
 
 @Getter
 @Setter
@@ -47,9 +38,11 @@ public class RentalOrderResponse {
     private Status status;
 
     @Schema(description = "Дата создание заявки")
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Schema(description = "Дата обновление заявки")
+    @Builder.Default
     private LocalDateTime updatedAt = LocalDateTime.now();
 
     @Schema(description = "Адрес")

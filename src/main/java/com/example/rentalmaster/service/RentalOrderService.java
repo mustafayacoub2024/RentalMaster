@@ -5,4 +5,8 @@ import com.example.rentalmaster.model.dto.response.RentalOrderResponse;
 
 public interface RentalOrderService {
     RentalOrderResponse addRentalOrder(RentalOrderRequest rentalOrderRequest);
+
+    RentalOrderResponse updateStatusByInProgress(String rentalOrderId);
+
+    RentalOrderResponse updateStatusByCombleted(String rentalOrderId);
 }
