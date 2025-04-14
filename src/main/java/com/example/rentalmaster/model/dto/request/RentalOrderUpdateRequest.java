@@ -25,12 +25,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldNameConstants
-public class RentalOrderRequest {
-
-    @NotNull
-    @Schema(description = "Дата создание заявки")
-    @Builder.Default
-    private LocalDateTime createdAt = LocalDateTime.now();
+public class RentalOrderUpdateRequest {
 
     @NotNull
     @Schema(description = "Дата обновление заявки")
@@ -50,9 +45,9 @@ public class RentalOrderRequest {
     @Schema(description = "Дата окончание аренды")
     private LocalDateTime endDate;
 
-//    @NotNull
-//    @Schema(description = "Стоимость аренды")
-//    private Double totalCost;
+    @NotNull
+    @Schema(description = "Стоимость аренды")
+    private Double totalCost;
 
     @NotNull
     @Schema(description = "Сотрудник")
@@ -66,11 +61,4 @@ public class RentalOrderRequest {
     @Schema(description = "Техника")
     private List<Technique> techniques;
 
-    @NotNull
-    @Schema(description = "Клиент")
-    private Clients clients;
-
-    @NotNull
-    @Schema(description = "Филиал")
-    private Branches branch;
 }

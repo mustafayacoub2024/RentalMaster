@@ -13,6 +13,9 @@ import com.example.rentalmaster.model.db.repository.EmployeesRepository;
 import com.example.rentalmaster.model.db.repository.RentalOrderRepository;
 import com.example.rentalmaster.model.db.repository.TechniqueRepository;
 import com.example.rentalmaster.model.dto.request.RentalOrderRequest;
+import com.example.rentalmaster.model.dto.request.RentalOrderUpdateRequest;
+import com.example.rentalmaster.model.dto.response.ClientsResponse;
+import com.example.rentalmaster.model.dto.response.RentalOrderGetAllResponse;
 import com.example.rentalmaster.model.dto.response.RentalOrderResponse;
 import com.example.rentalmaster.model.dto.response.RentalShortResponse.ClientShortResponse;
 import com.example.rentalmaster.model.dto.response.RentalShortResponse.DriverShortResponse;
@@ -34,7 +37,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -72,6 +74,14 @@ public class RentalOrderServiceImpl implements RentalOrderService {
                 .map(Technique::getStateNumber)
                 .toList();
         List<Technique> techniques = techniqueRepository.findAllById(techniqueIds);
+
+        techniques.forEach(tech -> {
+            if (tech.getAvailability() != Availability.AVAILABLE) {
+                throw new CommonBackendException(
+                        "Техника " + tech.getStateNumber() + " недоступна",
+                        HttpStatus.CONFLICT);
+            }
+        });
 
         String personalNumber = rentalOrderRequest.getEmployees().getPersonalNumber();
         Employees employee = employeesService.getEmployee(personalNumber);
@@ -253,6 +263,78 @@ public class RentalOrderServiceImpl implements RentalOrderService {
         response.setRentalDays(actualDays);
         response.setMessage("Статус заявки " + rentalOrderId + " успешно изменён на статус 'Завершено'");
         return response;
+    }
+
+    @Override
+    public RentalOrderResponse updateRentalOrder(String rentalOrderId, RentalOrderUpdateRequest rentalOrderRequest) {
+        RentalOrder rentalOrder = rentalOrderRepository.findByRentalOrderId(rentalOrderId).orElseThrow(() ->
+                new CommonBackendException("Заявка с номером " + rentalOrderId + " не найдено", HttpStatus.NOT_FOUND));
+
+        List<String> driverIds = rentalOrderRequest.getDrivers().stream()
+                .map(Drivers::getPersonalNumber)
+                .toList();
+        List<Drivers> drivers = driversRepository.findAllByPersonalNumberIn(driverIds);
+
+        List<String> techniqueIds = rentalOrderRequest.getTechniques().stream()
+                .map(Technique::getStateNumber)
+                .toList();
+        List<Technique> techniques = techniqueRepository.findAllById(techniqueIds);
+
+        techniques.forEach(tech -> {
+            if (tech.getAvailability() != Availability.AVAILABLE) {
+                throw new CommonBackendException(
+                        "Техника " + tech.getStateNumber() + " недоступна",
+                        HttpStatus.CONFLICT);
+            }
+        });
+
+        String personalNumber = rentalOrderRequest.getEmployees().getPersonalNumber();
+        Employees employee = employeesService.getEmployee(personalNumber);
+
+        rentalOrder.setAddress(rentalOrderRequest.getAddress());
+        rentalOrder.setStartDate(rentalOrderRequest.getStartDate());
+        rentalOrder.setEndDate(rentalOrderRequest.getEndDate());
+        rentalOrder.setEmployees(employee);
+        rentalOrder.setDrivers(drivers);
+        rentalOrder.setTechniques(techniques);
+        rentalOrder.setTotalCost(rentalOrderRequest.getTotalCost());
+
+        double dailyCost = calculateTechCost(techniques) + calculateDriverCost(drivers);
+        long days = ChronoUnit.DAYS.between(
+                rentalOrder.getStartDate().toLocalDate(),
+                rentalOrder.getEndDate().toLocalDate()
+        );
+        rentalOrder.setTotalCost(dailyCost * days);
+
+        int actualDays = (int) ChronoUnit.DAYS.between(
+                rentalOrder.getStartDate().toLocalDate(),
+                rentalOrder.getEndDate().toLocalDate()
+        );
+
+        RentalOrder updatedOrder = rentalOrderRepository.save(rentalOrder);
+
+        RentalOrderResponse response = objectMapper.convertValue(updatedOrder, RentalOrderResponse.class);
+        response.setRentalDays(actualDays);
+        response.setMessage("Данные заявки " + rentalOrderId + " успешно изменены");
+        return response;
+    }
+
+    @Override
+    public List<RentalOrderGetAllResponse> getAllRentalOrders() {
+        List<RentalOrder> rentalOrders = rentalOrderRepository.findAll();
+
+        if (rentalOrders.isEmpty()) {
+            throw new CommonBackendException("Списко заявок пуст", HttpStatus.NOT_FOUND);
+        }
+
+        return rentalOrders.stream()
+                .map(rentalOrder -> {
+                    RentalOrderGetAllResponse response = objectMapper.convertValue(rentalOrder, RentalOrderGetAllResponse.class);
+                    response.setMessage("Заявка номер " + rentalOrder.getRentalOrderId() + " общая сумма "
+                            + rentalOrder.getTotalCost() + " рублей");
+                    return response;
+                })
+                .toList();
     }
 
 
