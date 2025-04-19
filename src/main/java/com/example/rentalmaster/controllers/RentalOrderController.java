@@ -44,6 +44,13 @@ public class RentalOrderController {
 
     }
 
+    @PutMapping("/{rentalOrderId}/rejected")
+    @Operation(summary = "Редактирование статуса заявки, REJECTED")
+    public RentalOrderResponse updateRentalStatusByRejected(@PathVariable String rentalOrderId) {
+        return rentalOrderService.updateStatusByRejected(rentalOrderId);
+
+    }
+
     @PutMapping("/{rentalOrderId}")
     @Operation(summary = "Редактирование заявки")
     public RentalOrderResponse updateRentalStatusById(@PathVariable String rentalOrderId,
@@ -57,6 +64,11 @@ public class RentalOrderController {
         return rentalOrderService.getAllRentalOrders();
     }
 
+    @GetMapping("/{rentalOrderId}")
+    @Operation(summary = "Получение информации о заявке")
+    public RentalOrderResponse getRentalOrderById(@PathVariable String rentalOrderId) {
+        return rentalOrderService.getInfoToOrderById(rentalOrderId);
+    }
 
 
 }

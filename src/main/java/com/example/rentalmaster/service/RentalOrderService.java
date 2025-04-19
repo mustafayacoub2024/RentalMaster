@@ -17,4 +17,8 @@ public interface RentalOrderService {
     RentalOrderResponse updateRentalOrder(String rentalOrderId, RentalOrderUpdateRequest rentalOrderRequest);
 
     List<RentalOrderGetAllResponse> getAllRentalOrders();
+
+    RentalOrderResponse getInfoToOrderById(String rentalOrderId);
+
+    RentalOrderResponse updateStatusByRejected(String rentalOrderId);
 }

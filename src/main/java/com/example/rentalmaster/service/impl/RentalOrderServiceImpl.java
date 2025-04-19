@@ -337,6 +337,108 @@ public class RentalOrderServiceImpl implements RentalOrderService {
                 .toList();
     }
 
+    @Override
+    public RentalOrderResponse getInfoToOrderById(String rentalOrderId) {
+        RentalOrder rentalOrder = rentalOrderRepository.findByRentalOrderId(rentalOrderId)
+                .orElseThrow(() -> new CommonBackendException("Заявка с номером " + rentalOrderId + " не найдена"
+                        , HttpStatus.NOT_FOUND));
+
+        EmployeeShortResponse employeeShort = EmployeeShortResponse.builder()
+                .personalNumber(rentalOrder.getEmployees().getPersonalNumber())
+                .build();
+
+        ClientShortResponse clientShort = ClientShortResponse.builder()
+                .inn(rentalOrder.getClients().getInn())
+                .build();
+
+        List<DriverShortResponse> driverShorts = rentalOrder.getDrivers().stream()
+                .map(d -> DriverShortResponse.builder()
+                        .personalNumber(d.getPersonalNumber())
+                        .build())
+                .collect(Collectors.toList());
+
+        List<TechniqueShortResponse> techniqueShorts = rentalOrder.getTechniques().stream()
+                .map(t -> TechniqueShortResponse.builder()
+                        .stateNumber(t.getStateNumber())
+                        .build())
+                .collect(Collectors.toList());
+
+        return RentalOrderResponse.builder()
+                .message("Заявка с номером " + rentalOrderId)
+                .rentalOrderId(rentalOrder.getRentalOrderId())
+                .rentalDays((int) ChronoUnit.DAYS.between(
+                        rentalOrder.getStartDate().toLocalDate(),
+                        rentalOrder.getEndDate().toLocalDate()))
+                .status(rentalOrder.getStatus())
+                .createdAt(rentalOrder.getCreatedAt())
+                .updatedAt(rentalOrder.getUpdatedAt())
+                .address(rentalOrder.getAddress())
+                .startDate(rentalOrder.getStartDate())
+                .endDate(rentalOrder.getEndDate())
+                .totalCost(rentalOrder.getTotalCost())
+                .employees(employeeShort)
+                .clients(clientShort)
+                .drivers(driverShorts)
+                .techniques(techniqueShorts)
+                .build();
+
+    }
+
+    @Override
+    public RentalOrderResponse updateStatusByRejected(String rentalOrderId) {
+        RentalOrder rentalOrder = rentalOrderRepository.findByRentalOrderId(rentalOrderId)
+                .orElseThrow(() -> new CommonBackendException(
+                        "Заявка " + rentalOrderId + " не найдена",
+                        HttpStatus.NOT_FOUND
+                ));
+
+        if (rentalOrder.getStatus() == Status.REJECTED) {
+            throw new CommonBackendException(
+                    "Заявка уже находится в статусе 'Завершено'",
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        rentalOrder.getTechniques().forEach(technique -> {
+            technique.setAvailability(Availability.AVAILABLE);
+            techniqueRepository.save(technique);
+        });
+
+        rentalOrder.setActualEndDate(LocalDateTime.now());
+        List<Technique> techniques = techniqueRepository.findAllById(
+                rentalOrder.getTechniques().stream()
+                        .map(Technique::getStateNumber)
+                        .toList()
+        );
+
+        List<Drivers> drivers = driversRepository.findAllByPersonalNumberIn(
+                rentalOrder.getDrivers().stream()
+                        .map(Drivers::getPersonalNumber)
+                        .toList()
+        );
+
+
+        double actualDailyCost = techniques.stream().mapToDouble(Technique::getBaseCost).sum()
+                + drivers.stream().mapToDouble(d -> d.getSalary() * 2).sum();
+
+        int actualDays = (int) ChronoUnit.DAYS.between(
+                rentalOrder.getStartDate().toLocalDate(),
+                rentalOrder.getActualEndDate().toLocalDate()
+        );
+
+        Double newTotalCost = actualDailyCost * actualDays;
+        rentalOrder.setTotalCost(newTotalCost);
+        rentalOrder.setStatus(Status.REJECTED);
+        rentalOrder.setActualEndDate(LocalDateTime.now());
+
+        RentalOrder updatedOrder = rentalOrderRepository.save(rentalOrder);
+
+        RentalOrderResponse response = objectMapper.convertValue(updatedOrder, RentalOrderResponse.class);
+        response.setRentalDays(actualDays);
+        response.setMessage("Статус заявки " + rentalOrderId + " успешно изменён на статус 'Откланено'");
+        return response;
+    }
+
 
     private Double calculateTotalCost(RentalOrderRequest request) {
         if (request.getStartDate() == null || request.getEndDate() == null) {
