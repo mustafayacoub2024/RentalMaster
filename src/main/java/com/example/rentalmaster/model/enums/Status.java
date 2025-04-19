@@ -3,7 +3,8 @@ package com.example.rentalmaster.model.enums;
 public enum Status {
     NEW("Новая"),
     IN_PROGRESS("В процессе"),
-    COMPLETED("Завершено");
+    COMPLETED("Завершено"),
+    REJECTED("Откланено");
 
     private final String russianName;
 
