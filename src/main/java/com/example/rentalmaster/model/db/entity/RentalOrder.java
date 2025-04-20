@@ -3,7 +3,6 @@ package com.example.rentalmaster.model.db.entity;
 
 import com.example.rentalmaster.model.enums.Status;
 import com.example.rentalmaster.utils.StatusConverter;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +12,6 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 /*Заявка на аренду строительной техники*/
@@ -70,7 +68,7 @@ public class RentalOrder {
     @JoinColumn(name = "personalNumber")
     private Employees employees;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private List<Drivers> drivers;
 

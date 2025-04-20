@@ -435,7 +435,7 @@ public class RentalOrderServiceImpl implements RentalOrderService {
 
         RentalOrderResponse response = objectMapper.convertValue(updatedOrder, RentalOrderResponse.class);
         response.setRentalDays(actualDays);
-        response.setMessage("Статус заявки " + rentalOrderId + " успешно изменён на статус 'Откланено'");
+        response.setMessage("Статус заявки " + rentalOrderId + " успешно изменён на статус 'Завершено'");
         return response;
     }
 

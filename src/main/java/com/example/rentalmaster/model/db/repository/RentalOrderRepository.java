@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -21,7 +22,9 @@ public interface RentalOrderRepository extends JpaRepository<RentalOrder, String
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate);
 
-//    boolean existsByTechniquesAndDateRange(String stateNumber, LocalDateTime startDate, LocalDateTime endDate);
-
     Optional<RentalOrder> findByRentalOrderId(String rentalOrderId);
+
+    @Query("SELECT DISTINCT r FROM rentalOrder r LEFT JOIN FETCH r.techniques WHERE r.status = 'Завершено'")
+    List<RentalOrder> findAllCompletedOrdersWithTechniques();
+
 }
