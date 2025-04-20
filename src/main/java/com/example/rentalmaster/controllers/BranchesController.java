@@ -9,6 +9,7 @@ import com.example.rentalmaster.service.BranchesService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,7 @@ public class BranchesController {
 
     @PostMapping
     @Operation(summary = "Создать филиал")
+    @PreAuthorize("hasRole('DIRECTOR')")
     public BranchesResponse addBranches(@RequestBody @Valid BranchesRequest branchesRequest) {
         return branchesService.addBranches(branchesRequest);
 
@@ -36,6 +38,7 @@ public class BranchesController {
 
     @PutMapping("/{branchName}")
     @Operation(summary = "Изменить данные филиала")
+    @PreAuthorize("hasRole('DIRECTOR')")
     public BranchesResponse updateClient(@PathVariable @Valid String branchName,
                                          @RequestBody @Valid BranchesRequestUpdate branchesRequest) {
         return branchesService.updateBranches(branchName, branchesRequest);
@@ -44,6 +47,7 @@ public class BranchesController {
 
     @DeleteMapping("/{branchName}")
     @Operation(summary = "Удалить филиал")
+    @PreAuthorize("hasRole('DIRECTOR')")
     public BranchesResponse deleteClient(@PathVariable("branchName") String branchName) {
         return branchesService.deleteBranch(branchName);
 
