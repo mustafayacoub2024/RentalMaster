@@ -6,6 +6,7 @@ import com.example.rentalmaster.service.EmployeesService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +27,7 @@ public class EmployeesController {
 
     @PostMapping
     @Operation(summary = "Создать сотрудника")
+    @PreAuthorize("hasRole('DIRECTOR')")
     public EmployeesResponse addEmployee(@RequestBody @Valid EmployeesRequest employeesRequest) {
         return employeesService.addEmployee(employeesRequest);
 
@@ -33,6 +35,7 @@ public class EmployeesController {
 
     @PutMapping("/{personalNumber}")
     @Operation(summary = "Изменить данные сотрудника")
+    @PreAuthorize("hasRole('DIRECTOR')")
     public EmployeesResponse updateEmployee(@PathVariable @Valid String personalNumber,
                                             @RequestBody @Valid EmployeesRequest employeesRequest) {
         return employeesService.updateEmployee(personalNumber, employeesRequest);
@@ -41,6 +44,7 @@ public class EmployeesController {
 
     @DeleteMapping("/{personalNumber}")
     @Operation(summary = "Удалить данные сотрудника")
+    @PreAuthorize("hasRole('DIRECTOR')")
     public EmployeesResponse deleteEmployee(@PathVariable("personalNumber") String personalNumber) {
         return employeesService.deleteEmployee(personalNumber);
 
@@ -48,6 +52,7 @@ public class EmployeesController {
 
     @GetMapping("/{personalNumber}")
     @Operation(summary = "Получить данные сотрудника по табельному номеру")
+    @PreAuthorize("hasRole('DIRECTOR')")
     public EmployeesResponse getEmployeeByPersonalNumber(@PathVariable("personalNumber") String personalNumber) {
         return employeesService.getEmployeeByPersonalNumber(personalNumber);
 
@@ -55,6 +60,7 @@ public class EmployeesController {
 
     @GetMapping()
     @Operation(summary = "Список всех сотрудников")
+    @PreAuthorize("hasRole('DIRECTOR')")
     public List<EmployeesResponse> getAllEmployees() {
         return employeesService.getAllEmployees();
 

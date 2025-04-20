@@ -13,4 +13,8 @@ public enum Roles {
     public String getRussianName() {
         return russianName;
     }
+
+    public String getAuthority() {
+        return "ROLE_" + name();
+    }
 }

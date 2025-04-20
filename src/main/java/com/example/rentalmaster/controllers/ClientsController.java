@@ -8,6 +8,7 @@ import com.example.rentalmaster.service.ClientsService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,6 +44,7 @@ public class ClientsController {
 
     @DeleteMapping("/{inn}")
     @Operation(summary = "Удалить клиента")
+    @PreAuthorize("hasRole('DIRECTOR')")
     public ClientsResponse deleteClient(@PathVariable("inn") String inn) {
         return clientsService.deleteClient(inn);
 
