@@ -25,7 +25,7 @@ public class RentalOrderGetAllResponse {
 
     @Schema(description = "Сообщение о результате операции")
     private String message;
-
+}
 //    @Schema(description = "rental_order")
 //    private String rentalOrderId;
 //
@@ -69,7 +69,6 @@ public class RentalOrderGetAllResponse {
 //    @Schema(description = "Клиент")
 //    private ClientShortResponse clients;
 
-}
 
 
 
