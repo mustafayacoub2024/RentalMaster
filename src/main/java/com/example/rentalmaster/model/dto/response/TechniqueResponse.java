@@ -19,7 +19,7 @@ public class TechniqueResponse {
 
     @Schema(description = "Сообщение о результате операции")
     private String message;
-
+}
 //    @Schema(description = "Государственный номер техники")
 //    private String stateNumber;
 //
@@ -44,4 +44,4 @@ public class TechniqueResponse {
 //    @Schema(description = "Статус доступности технике")
 //    private Availability availability;
 
-}
+

@@ -6,6 +6,7 @@ import com.example.rentalmaster.model.db.repository.RentalOrderRepository;
 import com.example.rentalmaster.service.impl.ReportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +30,7 @@ public class TestReportController {
     private final RentalOrderRepository rentalOrderRepository;
 
     @GetMapping("/generate")
+    @PreAuthorize("hasRole('DIRECTOR')")
     public void testReportGeneration() throws IOException {
         List<RentalOrder> orders = rentalOrderRepository.findAllCompletedOrdersWithTechniques();
         log.info("Найдено завершённых заявок: {}", orders.size());

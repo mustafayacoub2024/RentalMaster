@@ -18,6 +18,7 @@ public class ClientsResponse {
 
     @Schema(description = "Сообщение о результате операции")
     private String message;
+}
 //
 //    @Schema(description = "название организаций")
 //    private String nameOfOrganization;
@@ -64,4 +65,4 @@ public class ClientsResponse {
 //    @Schema(description = "Номер телефона организаций")
 //    private String phone;
 
-}
+
