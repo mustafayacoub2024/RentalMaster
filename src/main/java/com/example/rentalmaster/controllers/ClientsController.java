@@ -37,7 +37,7 @@ public class ClientsController {
     @PutMapping("/{inn}")
     @Operation(summary = "Изменить данные клиента")
     public ClientsResponse updateClient(@PathVariable @Valid String inn,
-                                                        @RequestBody @Valid ClientsUpdateRequest clientsRequest) {
+                                        @RequestBody @Valid ClientsUpdateRequest clientsRequest) {
         return clientsService.updateClient(inn, clientsRequest);
 
     }
@@ -60,5 +60,6 @@ public class ClientsController {
     @Operation(summary = "Получить данных о клиенте")
     public ClientsInfoResponse getInfoClient(@PathVariable("inn") String inn) {
         return clientsService.getInofClient(inn);
+
     }
 }

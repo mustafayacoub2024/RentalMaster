@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /*данные о технике, которая имеется в компании*/
-/*http://localhost:8080/technique.html*/
 
 @Getter
 @Setter
@@ -37,7 +36,7 @@ public class Technique {
     private String color;
 
     @Column(name = "baseCost")
-    private Double baseCost; //Базовая стоимость аренды за 1 час в руб
+    private Double baseCost; //Базовая стоимость
 
     @Column(name = "typeTechnique")
     @Convert(converter = TypeTechniqueConverter.class)
@@ -46,10 +45,4 @@ public class Technique {
     @Column(name = "Статус")
     @Convert(converter = AvailabilityConverter.class)
     private Availability availability;
-
-
-
-
-
-
 }

@@ -7,9 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import java.util.UUID;
-
-
 @Getter
 @Setter
 @SuperBuilder
@@ -22,5 +19,4 @@ public class BranchesResponse {
 
     @Schema(description = "branchName")
     private String branchName;
-
 }

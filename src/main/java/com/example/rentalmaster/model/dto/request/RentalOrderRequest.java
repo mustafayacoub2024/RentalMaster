@@ -69,5 +69,4 @@ public class RentalOrderRequest {
     @NotNull
     @Schema(description = "Филиал")
     private Branches branch;
-
 }

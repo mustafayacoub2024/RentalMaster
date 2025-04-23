@@ -76,5 +76,4 @@ public class ClientsRequest {
     @NotEmpty
     @Schema(description = "Номер телефона организаций")
     private String phone;
-
 }

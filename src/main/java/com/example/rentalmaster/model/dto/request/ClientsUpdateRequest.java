@@ -72,5 +72,4 @@ public class ClientsUpdateRequest {
     @NotEmpty
     @Schema(description = "Номер телефона организаций")
     private String phone;
-
 }

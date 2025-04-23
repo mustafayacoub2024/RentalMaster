@@ -41,5 +41,4 @@ public class DriversRequest {
     @NotNull
     @Schema(description = "Зарплата водителя за 1 час работы")
     private Double salary;
-
 }

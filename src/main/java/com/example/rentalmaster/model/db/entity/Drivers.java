@@ -1,7 +1,6 @@
 package com.example.rentalmaster.model.db.entity;
 
-/*данные о сотрудниках
-* html страница: http://localhost:8080/driver.html */
+/*данные о сотрудниках*/
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,6 +38,4 @@ public class Drivers {
 
     @Column(name= "salary")
     private Double salary;
-
-
 }

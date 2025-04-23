@@ -1,7 +1,5 @@
 package com.example.rentalmaster.model.dto.request;
 
-import com.example.rentalmaster.model.db.entity.Branches;
-import com.example.rentalmaster.model.db.entity.Clients;
 import com.example.rentalmaster.model.db.entity.Drivers;
 import com.example.rentalmaster.model.db.entity.Employees;
 import com.example.rentalmaster.model.db.entity.Technique;
@@ -60,5 +58,4 @@ public class RentalOrderUpdateRequest {
     @NotNull
     @Schema(description = "Техника")
     private List<Technique> techniques;
-
 }

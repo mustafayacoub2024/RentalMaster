@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-
 @Getter
 @Setter
 @SuperBuilder
@@ -43,5 +42,4 @@ public class TechniqueInfoResponse {
 
     @Schema(description = "Статус доступности технике")
     private Availability availability;
-
 }

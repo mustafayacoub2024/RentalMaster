@@ -14,7 +14,6 @@ import lombok.Setter;
 import java.util.List;
 
 /*Филиал, в каждом городе свой отдельный филиал*/
-/*http://localhost:8080/branches.html*/
 
 @Getter
 @Setter
