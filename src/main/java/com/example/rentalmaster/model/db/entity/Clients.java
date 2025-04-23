@@ -1,19 +1,12 @@
 package com.example.rentalmaster.model.db.entity;
 
-import com.example.rentalmaster.model.enums.Status;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
-import java.util.List;
 
 /*Юридическое лицо, фирма */
-/* html страница: http://localhost:8080/clients.html */
 
 @Getter
 @Setter

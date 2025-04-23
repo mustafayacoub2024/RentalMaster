@@ -20,4 +20,3 @@ public enum TypeTechnique {
         return russianName;
     }
 }
-

@@ -41,7 +41,6 @@ public class GlobalExceptionHandler {
                         .timestamp(LocalDateTime.now())
                         .message(ex.getMessage())
                         .build());
-
     }
 
 
@@ -56,7 +55,6 @@ public class GlobalExceptionHandler {
                         .message(String.format("Отсутствует обязательный параметр: %s", parameter))
                         .path(request.getDescription(false).replace("uri=", ""))
                         .build());
-
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
@@ -73,7 +71,6 @@ public class GlobalExceptionHandler {
                         .message(String.format("Неверный тип данных для параметра: %s", parameter))
                         .path(request.getDescription(false).replace("uri=", ""))
                         .build());
-
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

@@ -20,6 +20,5 @@ public interface DriversService {
 
     List<DriverResponse> getAllDrivers();
 
-
     List<Drivers> getAll();
 }

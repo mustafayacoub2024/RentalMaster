@@ -16,7 +16,6 @@ import java.util.List;
 
 /*Заявка на аренду строительной техники*/
 
-
 @Getter
 @Setter
 @AllArgsConstructor
@@ -83,5 +82,4 @@ public class RentalOrder {
     @ManyToOne
     @JoinColumn(name = "branchName")
     private Branches branch;
-
 }

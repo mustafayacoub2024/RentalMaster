@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-
 @Getter
 @Setter
 @SuperBuilder
@@ -62,5 +61,4 @@ public class ClientsInfoResponse {
 
     @Schema(description = "Номер телефона организаций")
     private String phone;
-
 }

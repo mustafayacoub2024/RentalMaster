@@ -2,19 +2,15 @@ package com.example.rentalmaster.model.db.entity;
 
 import com.example.rentalmaster.model.enums.Roles;
 import com.example.rentalmaster.utils.RoleConverter;
-import com.example.rentalmaster.utils.TypeTechniqueConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-
 
 /*данные о сотрудниках */
 
@@ -44,5 +40,4 @@ public class Employees {
     @Column(name = "role")
     @Convert(converter = RoleConverter.class)
     private Roles role;
-
 }

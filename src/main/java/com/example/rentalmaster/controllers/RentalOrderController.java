@@ -68,7 +68,6 @@ public class RentalOrderController {
     @Operation(summary = "Получение информации о заявке")
     public RentalOrderResponse getRentalOrderById(@PathVariable String rentalOrderId) {
         return rentalOrderService.getInfoToOrderById(rentalOrderId);
+
     }
-
-
 }

@@ -6,11 +6,9 @@ import com.example.rentalmaster.model.dto.request.BranchesRequestUpdate;
 import com.example.rentalmaster.model.dto.response.BranchesResponse;
 import com.example.rentalmaster.model.dto.response.DriverInfoResponse;
 import com.example.rentalmaster.model.dto.response.TechniqueInfoResponse;
-import com.example.rentalmaster.model.dto.response.TechniqueResponse;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+
 
 public interface BranchesService  {
     BranchesResponse addBranches(BranchesRequest branchesRequest);

@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-
 @Getter
 @Setter
 @SuperBuilder
@@ -46,5 +45,4 @@ public class EmployeesResponse {
     @NotNull
     @Schema(description = "Роль")
     private Roles role;
-
 }

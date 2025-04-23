@@ -68,5 +68,4 @@ public class RentalOrderResponse {
 
     @Schema(description = "Клиент")
     private ClientShortResponse clients;
-
 }
