@@ -50,10 +50,6 @@ public class RentalOrderRequest {
     @Schema(description = "Дата окончание аренды")
     private LocalDateTime endDate;
 
-//    @NotNull
-//    @Schema(description = "Стоимость аренды")
-//    private Double totalCost;
-
     @NotNull
     @Schema(description = "Сотрудник")
     private Employees employees;
@@ -73,4 +69,5 @@ public class RentalOrderRequest {
     @NotNull
     @Schema(description = "Филиал")
     private Branches branch;
+
 }

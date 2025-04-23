@@ -26,27 +26,83 @@ public class ClientsServiceImpl implements ClientsService {
 
     @Override
     public ClientsResponse addClient(ClientsRequest clientsRequest) {
-
-        clientsRepository.findByInn(clientsRequest.getInn()).ifPresent(driver -> {
-            throw new CommonBackendException("Компания "+ clientsRequest.getNameOfOrganization() + " ,с инн "
-                    + clientsRequest.getInn() + " уже существует", HttpStatus.CONFLICT);
-        });
-
+        log.info("Создание новой карточки на клиента:{}", clientsRequest.getNameOfOrganization());
+        validateClientNotExists(clientsRequest.getInn(), clientsRequest.getNameOfOrganization());
         Clients clients = objectMapper.convertValue(clientsRequest, Clients.class);
         Clients savedClient = clientsRepository.save(clients);
-
+        log.info("Клиент:{} добавлень в бд", savedClient.getNameOfOrganization());
         ClientsResponse response = objectMapper.convertValue(savedClient, ClientsResponse.class);
-        response.setMessage("Компания "+ savedClient.getNameOfOrganization()+" ,инн " +
+        response.setMessage("Компания " + savedClient.getNameOfOrganization() + " ,инн " +
                 savedClient.getInn() + " успешно создан");
+        log.info("Клиент:{} успешно добавлен", savedClient.getNameOfOrganization());
         return response;
     }
 
     @Override
     public ClientsResponse updateClient(String inn, ClientsUpdateRequest clientsRequest) {
-        Clients client = clientsRepository.findByInn(inn)
+        log.info("Обнавление данных клиента:{}", clientsRequest.getNameOfOrganization());
+        Clients client = validateClientNoFound(inn);
+        updateClientInfo(client, clientsRequest);
+        Clients updatedClient = clientsRepository.save(client);
+        ClientsResponse response = objectMapper.convertValue(updatedClient, ClientsResponse.class);
+        response.setMessage("Данные компании " + updatedClient.getNameOfOrganization() + " успешно обновлены");
+        log.info("Данные клиента:{} обновлены", updatedClient.getNameOfOrganization());
+        return response;
+    }
+
+    @Override
+    public ClientsResponse deleteClient(String inn) {
+        log.info("Удаление клиента с инн:{}", inn);
+        Clients clients = validateClientNoFound(inn);
+        clientsRepository.delete(clients);
+        ClientsResponse response = objectMapper.convertValue(clients, ClientsResponse.class);
+        response.setMessage("Компания " + clients.getNameOfOrganization() + " успешно удалена");
+        log.info("Клиент {} удалён", clients.getNameOfOrganization());
+        return response;
+    }
+
+    @Override
+    public List<ClientsResponse> getAllClients() {
+        log.info("Запрос списка всех клиентов");
+        List<Clients> clients = clientsRepository.findAll();
+        validateClientNoEmpty(clients);
+        log.info("Всего клиентов найдено:{}", clients.size());
+        return clients.stream()
+                .map(client -> {
+                    ClientsResponse clientResponse = objectMapper.convertValue(client, ClientsResponse.class);
+                    clientResponse.setMessage("Клиент " + client.getNameOfOrganization() + " ,инн " + client.getInn());
+                    return clientResponse;
+                })
+                .toList();
+    }
+
+    @Override
+    public ClientsInfoResponse getInofClient(String inn) {
+        log.info("Запрос информации о клиенте с инн:{}", inn);
+        Clients clients = validateClientNoFound(inn);
+        log.info("Запрос информации о клиенте с инн:{} успешно выполнен", inn);
+        return buildClientResponse(clients);
+    }
+
+    @Override
+    public Clients getClient(String inn) {
+        return validateClientNoFound(inn);
+    }
+
+    private void validateClientNotExists(String inn, String nameOfOrganization) {
+        clientsRepository.findByInn(inn).ifPresent(driver -> {
+            throw new CommonBackendException("Компания " + nameOfOrganization + " ,с инн "
+                    + inn + " уже существует", HttpStatus.CONFLICT);
+        });
+    }
+
+    private Clients validateClientNoFound(String inn) {
+        return clientsRepository.findByInn(inn)
                 .orElseThrow(() -> new CommonBackendException("Компания с  инн "
                         + inn + " не найден", HttpStatus.NOT_FOUND));
+    }
 
+    private void updateClientInfo(Clients client, ClientsUpdateRequest clientsRequest) {
         client.setActualAddress(clientsRequest.getActualAddress());
         client.setLegalAddress(clientsRequest.getLegalAddress());
         client.setKpp(clientsRequest.getKpp());
@@ -61,51 +117,17 @@ public class ClientsServiceImpl implements ClientsService {
         client.setEmail(clientsRequest.getEmail());
         client.setPhone(clientsRequest.getPhone());
         client.setNameOfOrganization(clientsRequest.getNameOfOrganization());
-
-        Clients updatedClient = clientsRepository.save(client);
-        ClientsResponse response = objectMapper.convertValue(updatedClient, ClientsResponse.class);
-        response.setMessage("Данные компании " + updatedClient.getNameOfOrganization() + " успешно обновлены");
-        return response;
     }
 
-    @Override
-    public ClientsResponse deleteClient(String inn) {
-        Clients clients = clientsRepository.findByInn(inn)
-                .orElseThrow(() -> new CommonBackendException("Компания с  инн "
-                        + inn + " не найден", HttpStatus.NOT_FOUND));
-
-        clientsRepository.delete(clients);
-
-        ClientsResponse response = objectMapper.convertValue(clients, ClientsResponse.class);
-        response.setMessage("Компания " + clients.getNameOfOrganization() + " успешно удалена");
-        return response;
-    }
-
-    @Override
-    public List<ClientsResponse> getAllClients() {
-        List<Clients> clients = clientsRepository.findAll();
-
+    private void validateClientNoEmpty(List<Clients> clients) {
         if (clients.isEmpty()) {
             throw new CommonBackendException("Списко компании пуст", HttpStatus.NOT_FOUND);
         }
-
-        return clients.stream()
-                .map(client -> {
-                    ClientsResponse clientResponse = objectMapper.convertValue(client, ClientsResponse.class);
-                    clientResponse.setMessage("Клиент " + client.getNameOfOrganization() + " ,инн " + client.getInn());
-                    return clientResponse;
-                })
-                .toList();
     }
 
-    @Override
-    public ClientsInfoResponse getInofClient(String inn) {
-        Clients clients = clientsRepository.findByInn(inn)
-                .orElseThrow(() -> new CommonBackendException("Компания с  инн "
-                        + inn + " не найден", HttpStatus.NOT_FOUND));
-
+    private ClientsInfoResponse buildClientResponse(Clients clients) {
         return ClientsInfoResponse.builder()
-                .message("Данные о компании "+clients.getNameOfOrganization())
+                .message("Данные о компании " + clients.getNameOfOrganization())
                 .inn(clients.getInn())
                 .bik(clients.getBik())
                 .actualAddress(clients.getActualAddress())
@@ -122,12 +144,5 @@ public class ClientsServiceImpl implements ClientsService {
                 .nameOfOrganization(clients.getNameOfOrganization())
                 .okved(clients.getOkved())
                 .build();
-    }
-
-    @Override
-    public Clients getClient(String inn) {
-        return clientsRepository.findByInn(inn).orElseThrow(()-> new CommonBackendException("Клиент не найден",
-                HttpStatus.NOT_FOUND));
-
     }
 }
