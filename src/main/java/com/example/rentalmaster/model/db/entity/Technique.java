@@ -6,6 +6,7 @@ import com.example.rentalmaster.utils.AvailabilityConverter;
 import com.example.rentalmaster.utils.TypeTechniqueConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,6 +17,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity(name = "technique")
 public class Technique {
 
