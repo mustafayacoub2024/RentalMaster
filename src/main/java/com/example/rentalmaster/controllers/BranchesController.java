@@ -88,14 +88,14 @@ public class BranchesController {
     }
 
     @GetMapping("/{branchName}/drivers")
-    @Operation(summary = "Получить список технике на филиале")
+    @Operation(summary = "Получить список водителей на филиале")
     public List<DriverInfoResponse> getDriversByBranch(@PathVariable String branchName) {
         return branchesService.getDriversByBranchName(branchName);
 
     }
 
     @PostMapping("/{branchName}/drivers/{personalNumber}")
-    @Operation(summary = "Добавить технику в филиал")
+    @Operation(summary = "Добавить водителей в филиал")
     public BranchesResponse addDriverToBranch(
             @PathVariable String branchName,
             @PathVariable String personalNumber) {
