@@ -41,7 +41,7 @@ public class EmployeesServiceImpl implements EmployeesService {
         updateEmployeeInfo(employees, employeesRequest);
         Employees employeesUpdate = employeesRepository.save(employees);
         log.info("Новые данные сотрудника с табельным номером:{} сохранены в бд", employeesUpdate);
-        EmployeesResponse response = objectMapper.convertValue(employees, EmployeesResponse.class);
+        EmployeesResponse response = objectMapper.convertValue(employeesUpdate, EmployeesResponse.class);
         response.setMessage("Сотрудник с табельным номером " + employeesUpdate.getPersonalNumber() + " успешно изминён");
         log.info("Сотрудник с табельным номером:{} успешно изминены", personalNumber);
         return response;
@@ -105,7 +105,7 @@ public class EmployeesServiceImpl implements EmployeesService {
         employees.setFirstName(employeesRequest.getFirstName());
         employees.setEmail(employeesRequest.getEmail());
         employees.setPhone(employeesRequest.getPhone());
-        employees.setRole(employees.getRole());
+        employees.setRole(employeesRequest.getRole());
     }
 
     private EmployeesResponse buildEmployeeResponse(Employees employees, String personalNumber){

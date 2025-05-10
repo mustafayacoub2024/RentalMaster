@@ -25,12 +25,8 @@ import com.example.rentalmaster.model.dto.response.RentalShortResponse.EmployeeS
 import com.example.rentalmaster.model.dto.response.RentalShortResponse.TechniqueShortResponse;
 import com.example.rentalmaster.model.enums.Availability;
 import com.example.rentalmaster.model.enums.Status;
-import com.example.rentalmaster.service.BranchesService;
-import com.example.rentalmaster.service.ClientsService;
-import com.example.rentalmaster.service.DriversService;
 import com.example.rentalmaster.service.EmployeesService;
 import com.example.rentalmaster.service.RentalOrderService;
-import com.example.rentalmaster.service.TechniqueService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,11 +51,7 @@ public class RentalOrderServiceImpl implements RentalOrderService {
     private final EmployeesRepository employeesRepository;
     private final ObjectMapper objectMapper;
     private final EmailService emailService;
-    private final DriversService driversService;
-    private final BranchesService branchesService;
     private final EmployeesService employeesService;
-    private final TechniqueService techniqueService;
-    private final ClientsService clientsService;
     private final BranchesRepository branchesRepository;
 
     @Override
@@ -742,5 +734,4 @@ public class RentalOrderServiceImpl implements RentalOrderService {
                 .stateNumber(technique.getStateNumber())
                 .build();
     }
-
 }
